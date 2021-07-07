@@ -17,6 +17,8 @@ flag_Signal3 = 0
 flag_OrderSend = 0
 flag_OrderClose = 0
 flag_TrailingStop = 0
+flag_market = 0
+flag_market2 = 0
 # https://realpython.com/python-gui-tkinter/
 #window = tk.Tk()
 #window.title("Community Power Parser Log Tester - @Ulises2k for CommunityPower EA")
@@ -26,14 +28,15 @@ flag_TrailingStop = 0
 # text_box.pack()
 
 # Variables Clean
-SignalRow = ""
-SignalRow2 = ""
-SignalRow3 = ""
-OrderSendRow = ""
-OrderCloseRow = ""
-TrailingStopRow = ""
-OrderModifyRow = ""
-
+SignalRow = ()
+SignalRow2 = ()
+SignalRow3 = ()
+OrderSendRow = ()
+OrderCloseRow = ()
+TrailingStopRow = ()
+OrderModifyRow = ()
+marketRow = ()
+marketRow2 = ()
 #CUSTOM THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 DATA_FOLDER="9EB2973C469D24060397BB5158EA73A5"
 #CUSTOM THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -51,7 +54,7 @@ if not (os.path.isfile(LogFile)):
 
 
 #HEADER CSV
-print("Time;Action;Type;Martingale;Price;Signal;Symbol;Type;Volume;PriceAction;ValueX;Price1;Price2;Comment;MagicID;Status;Ticket #")
+print("Time;Action;Type;Martingale;Signal;Symbol;Volume;PriceAction;Slippage;Ask;Bid;Comment;MagicID;Status;Ticket #")
 
 #Interate Log
 for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
@@ -72,6 +75,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             #--------------------------------------------------------------------------------------------
             #SIGNAL
             #--------------------------------------------------------------------------------------------
+            #Example 1
             # QM	0	02:50:15.116	Core 1	2020.09.21 17:40:00   Signal to open buy #2 at 1885.770!
             # OE	0	02:50:15.116	Core 1	2020.09.21 17:40:00   market buy 0.19 XAUUSD (1885.400 / 1885.770)
             # GQ	0	02:50:15.116	Core 1	2020.09.21 17:40:00   deal #97 buy 0.19 XAUUSD at 1885.770 done (based on order #97)
@@ -79,14 +83,35 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             # HR	0	02:50:15.116	Core 1	2020.09.21 17:40:00   order performed buy 0.19 at 1885.770 [#97 buy 0.19 XAUUSD at 1885.770]
             # KH	0	02:50:15.116	Core 1	2020.09.21 17:40:00   |  OrderSend( XAUUSD, buy, 0.19, 1885.770, 50, 0.000, 0.000, "CP18.06.2021.21:03 #2", 234 ) - OK! Ticket #97.
 
+            #Example 2
+            #JR	0	21:48:46.343	Core 1	2021.01.06 14:43:36   Signal to open buy #1 at 1935.010 (BigCandle)!
+            #DJ	0	21:48:46.343	Core 1	2021.01.06 14:43:36   market buy 0.1 XAUUSD (1934.050 / 1935.010)
+            #DF	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal #2 buy 0.1 XAUUSD at 1935.010 done (based on order #2)
+            #DK	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal performed [#2 buy 0.1 XAUUSD at 1935.010]
+            #CM	0	21:48:46.343	Core 1	2021.01.06 14:43:36   order performed buy 0.1 at 1935.010 [#2 buy 0.1 XAUUSD at 1935.010]
+            #IN	0	21:48:46.343	Core 1	2021.01.06 14:43:36   |  OrderSend( XAUUSD, buy, 0.10, 1935.010, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #2.
+            #KP	0	21:48:46.343	Core 1	2021.01.06 14:43:36   Signal to open sell #1 at 1934.050 (BigCandle)!
+            #LP	0	21:48:46.343	Core 1	2021.01.06 14:43:36   market sell 0.1 XAUUSD (1934.050 / 1935.010)
+            #QF	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal #3 sell 0.1 XAUUSD at 1934.050 done (based on order #3)
+            #DG	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal performed [#3 sell 0.1 XAUUSD at 1934.050]
+            #NN	0	21:48:46.343	Core 1	2021.01.06 14:43:36   order performed sell 0.1 at 1934.050 [#3 sell 0.1 XAUUSD at 1934.050]
+            #GM	0	21:48:46.343	Core 1	2021.01.06 14:43:36   |  OrderSend( XAUUSD, sell, 0.10, 1934.050, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #3.
+            #HF	0	21:48:46.343	Core 1	2021.01.06 14:43:36   Signal to close buy (IdentifyTrend)!
+            #LR	0	21:48:46.343	Core 1	2021.01.06 14:43:36   market sell 0.1 XAUUSD, close #2 (1937.140 / 1937.630)
+            #NR	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal #4 sell 0.1 XAUUSD at 1937.140 done (based on order #4)
+            #RK	0	21:48:46.343	Core 1	2021.01.06 14:43:36   deal performed [#4 sell 0.1 XAUUSD at 1937.140]
+            #IJ	0	21:48:46.343	Core 1	2021.01.06 14:43:36   order performed sell 0.1 at 1937.140 [#4 sell 0.1 XAUUSD at 1937.140]
+            #HG	0	21:48:46.343	Core 1	2021.01.06 14:43:36   |  OrderClose( 2, 0.10, 1937.140, 50 ) - OK!
+
+
             # Signal to open buy #1 at 1490.790 (BigCandle + IdentifyTrend + TDI)!
             SignalRegex = re.compile(r'Signal to ([a-zA-Z ]+) ([a-zA-Z ]+) \#([0-9]+) at ([0-9]*[.]?[0-9]*) \(([a-zA-Z+ ]+)\)!')
             SignalMatch = SignalRegex.search(mensaje)
             if SignalMatch is not None:
-                # print(mensaje)
-                # print(SignalMatch.groups())
+                #print(mensaje)
+                #print(SignalMatch.groups())
                 flag_Signal = 1
-                SignalRow = linea.split("   ")[0] + ";" + "Signal to " + SignalMatch.group(1) + ";" + SignalMatch.group(2) + ";" + SignalMatch.group(3) + ";" + SignalMatch.group(4) + ";" + SignalMatch.group(5)
+                SignalRow = (linea.split("   ")[0],) + SignalMatch.groups()
                 #print(SignalRow)
 
             # Signal to open buy #2 at 1885.770!
@@ -96,7 +121,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(mensaje)
                 # print(SignalMatch.groups())
                 flag_Signal2 = 1
-                SignalRow2 = linea.split("   ")[0] + ";" + "Signal to " + SignalMatch2.group(1) + ";" + SignalMatch2.group(2) + ";" + SignalMatch2.group(3) + ";" + SignalMatch2.group(4)
+                SignalRow2 = (linea.split("   ")[0],) + SignalMatch2.groups()
                 #print(SignalRow2)
 
             # Signal to close sell (FIBO )!
@@ -106,7 +131,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(mensaje)
                 # print(SignalMatch3.groups())
                 flag_Signal3 = 1
-                SignalRow3 = linea.split("   ")[0] + ";" + "Signal to " + SignalMatch3.group(1) + ";" + SignalMatch3.group(2) + ";;;" + SignalMatch3.group(3)
+                SignalRow3 = (linea.split("   ")[0],) + SignalMatch3.groups()
                 #print(SignalRow3)
 
             # |  OrderSend( XAUUSD, buy, 0.10, 1592.750, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #2.
@@ -114,21 +139,39 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             OrderSendMatch = OrderSendRegex.search(mensaje)
             if OrderSendMatch is not None:
                 # print(mensaje)
-                #print(OrderSendMatch.groups())
+                # print(OrderSendMatch.groups())
                 flag_OrderSend = 1
-                OrderSendRow = linea.split("   ")[0] + ";" + OrderSendMatch.group(1) + ";" + OrderSendMatch.group(2) + ";" + OrderSendMatch.group(3) + ";" + OrderSendMatch.group(4) + ";" + OrderSendMatch.group(5) + ";" + OrderSendMatch.group(6) + ";" + OrderSendMatch.group(7) + ";" + OrderSendMatch.group(8) + ";" + OrderSendMatch.group(9) + ";" + OrderSendMatch.group(10) + ";" + OrderSendMatch.group(11)
+                OrderSendRow = (linea.split("   ")[0],) + OrderSendMatch.groups()
                 #print(OrderSendRow)
 
+
+            # its MISSING
             # |  OrderSend( XAUUSD, buy stop, 0.10, 1501.680, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - ERROR #10018 (Market is closed)!
-            # FALTA TERMINAR
 
 
-            #GE	0	09:33:09.610	Core 1	2020.03.23 00:05:08   Signal to close sell (FIBO )!
-            #MN	0	09:33:09.610	Core 1	2020.03.23 00:05:08   market buy 1.48 EURUSD, close #272 (1.06935 / 1.06957)
-            #OM	0	09:33:09.610	Core 1	2020.03.23 00:05:08   deal #273 buy 1.48 EURUSD at 1.06957 done (based on order #273)
-            #CD	0	09:33:09.610	Core 1	2020.03.23 00:05:08   deal performed [#273 buy 1.48 EURUSD at 1.06957]
-            #MJ	0	09:33:09.610	Core 1	2020.03.23 00:05:08   order performed buy 1.48 at 1.06957 [#273 buy 1.48 EURUSD at 1.06957]
-            #LD	0	09:33:09.610	Core 1	2020.03.23 00:05:08   |  OrderClose( 272, 1.48, 1.06957, 50 ) - OK!
+
+            #market buy 0.1 XAUUSD (1934.050 / 1935.010)
+            marketRegex = re.compile(r'market ([a-zA-Z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z]+) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
+            marketRegexMatch = marketRegex.search(mensaje)
+            if marketRegexMatch is not None:
+                #print(mensaje)
+                #print(marketRegexMatch.groups())
+                flag_market = 1
+                marketRow = (linea.split("   ")[0],) + marketRegexMatch.groups()
+                #print(marketRow)
+
+            #market buy 0.1 EURUSD, close #10 (1.13411 / 1.13414)
+            marketRegex2 = re.compile(r'market ([a-zA-Z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z]+), ([a-zA-Z]+) #([0-9]*) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
+            marketRegexMatch2 = marketRegex2.search(mensaje)
+            if marketRegexMatch2 is not None:
+                #print(mensaje)
+                #print(marketRegexMatch2.groups())
+                flag_market2 = 1
+                marketRow2 = (linea.split("   ")[0],) + marketRegexMatch2.groups()
+                #print(marketRow2)
+
+
+
             # |  OrderClose( 272, 1.48, 1.06957, 50 ) - OK!
             OrderCloseRegex = re.compile(r'\|  OrderClose\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*) \) - ([a-zA-Z]+)!')
             OrderCloseMatch = OrderCloseRegex.search(mensaje)
@@ -136,45 +179,69 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(mensaje)
                 #print(OrderCloseMatch.groups())
                 flag_OrderClose = 1
-                OrderCloseRow = linea.split("   ")[0] + ";" + ";" + OrderCloseMatch.group(2) + ";" + OrderCloseMatch.group(3) + ";" + OrderCloseMatch.group(4) + ";;;;;" + OrderCloseMatch.group(5) + ";" + OrderCloseMatch.group(1)
+                OrderCloseRow = (linea.split("   ")[0],) + OrderCloseMatch.groups()
                 #print(OrderCloseRow)
 
 
-            #Juntar la señal junto con la orden
-            if (SignalRow.split(";")[0] == OrderSendRow.split(";")[0]):
-                if ((flag_Signal) and (flag_OrderSend)):
-                    OrderSendRow=OrderSendRow.replace(SignalRow.split(";")[0], '')
-                    print(SignalRow +  OrderSendRow)
-                    SignalRow = ""
-                    OrderSendRow = ""
-                    flag_Signal = 0
-                    flag_OrderSend = 0
-                    #continue
-
-            if (SignalRow2.split(";")[0] == OrderSendRow.split(";")[0]):
-                if ((flag_Signal2) and (flag_OrderSend)):
-                    OrderSendRow=OrderSendRow.replace(SignalRow2.split(";")[0], '')
-                    print(SignalRow2 + ";" + OrderSendRow)
-                    SignalRow2 = ""
-                    OrderSendRow = ""
-                    flag_Signal2 = 0
-                    flag_OrderSend = 0
-                    #continue
-
-            if (SignalRow3.split(";")[0] == OrderCloseRow.split(";")[0]):
-                if ((flag_Signal3) and (flag_OrderClose)):
-                    OrderCloseRow=OrderCloseRow.replace(SignalRow3.split(";")[0], '')
-                    print(SignalRow3 + ";" + OrderCloseRow)
-                    SignalRow3 = ""
-                    OrderCloseRow = ""
-                    flag_Signal3 = 0
-                    flag_OrderClose = 0
-                    #continue
 
 
 
+            #Join the signal together with the order and market
+            if (len(SignalRow)) and (len(marketRow)) and (len(OrderSendRow) and (SignalRow[0] == marketRow[0]) and (SignalRow[0] == OrderSendRow[0])):
+                if ((flag_Signal == 1) and (flag_market == 1) and (flag_OrderSend == 1)):
+                    #Signal to open buy #1 at 1935.010 (BigCandle)!
+                    #mar
+                    # ket buy 0.1 XAUUSD (1934.050 / 1935.010)
+                    #|  OrderSend( XAUUSD, buy, 0.10, 1935.010, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #2.
+                    if (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
+                        print(SignalRow[0] + ";Signal to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                        SignalRow = tuple()
+                        marketRow = tuple()
+                        OrderSendRow = tuple()
+                        flag_Signal = 0
+                        flag_market = 0
+                        flag_OrderSend = 0
+                    else:
+                        print("Error in EA. Check Please!! Critical error-1")
+                        exit()
 
-            #FALTA TERMINAR
+            if (len(SignalRow2)) and (len(marketRow)) and (len(OrderSendRow) and (SignalRow2[0] == marketRow[0]) and (SignalRow2[0] == OrderSendRow[0])):
+                if ((flag_Signal2 == 1) and (flag_market == 1) and (flag_OrderSend == 1)):
+                    #Signal to open buy #2 at 1843.330!
+                    #market buy 0.12 XAUUSD (1842.830 / 1843.330)
+                    #|  OrderSend( XAUUSD, buy, 0.12, 1843.330, 50, 0.000, 0.000, "CP18.06.2021.21:03 #2", 234 ) - OK! Ticket #17.
+                    if (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
+                        print(SignalRow2[0] + ";Signal to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                        SignalRow2 = tuple()
+                        marketRow = tuple()
+                        OrderSendRow = tuple()
+                        flag_Signal = 0
+                        flag_market = 0
+                        flag_OrderSend = 0
+                    else:
+                        print("Error in EA. Check Please!! Critical error-2")
+                        exit()
+
+            if (len(SignalRow3)) and (len(marketRow2)) and (len(OrderCloseRow) and (SignalRow3[0] == marketRow2[0]) and (SignalRow3[0] == OrderCloseRow[0])):
+                if ((flag_Signal3 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #Signal to close sell (FIBO )!
+                    #market buy 0.1 EURUSD, close #10 (1.13411 / 1.13414)
+                    #|  OrderClose( 10, 0.10, 1.13414, 50 ) - OK!
+                    if (marketRow2[5] == OrderCloseRow[1]):
+                        print(SignalRow3[0] + ";Signal to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;" + OrderCloseRow[5]+ ";" + OrderCloseRow[1])
+                        SignalRow3 = tuple()
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_Signal = 0
+                        flag_market = 0
+                        flag_OrderClose = 0
+                    else:
+                        print("Error in EA. Check Please!! Critical error-3")
+                        exit()
+            continue
+
+
+            # its MISSING
             #--------------------------------------------------------------------------------------------
             #TrailingStop
             #--------------------------------------------------------------------------------------------
@@ -195,7 +262,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 #print(TrailingStopMatch.groups())
                 flag_TrailingStop = 1
                 TrailingStopRow = linea.split("   ")[0] + "TrailingStop for;" +  TrailingStopMatch.group(1) + ";;"  + TrailingStopMatch.group(2) + ";" + TrailingStopMatch.group(3)
-                print(TrailingStopRow)
+                #print(TrailingStopRow)
 
             #PI	0	02:50:27.323	Core 1	2020.10.09 17:02:50   |  OrderModify( 97, 1885.770, 1920.370, 0.000 ) - OK!
             #RF	0	02:50:27.323	Core 1	2020.10.09 17:02:50   |  OrderModify( 96, 1969.460, 1920.370, 0.000 ) - OK!
@@ -212,7 +279,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             if (TrailingStopRow.split(";")[0] == OrderModifyRow.split(";")[0]):
                 if ((flag_TrailingStop) and (flag_OrderModify)):
                     OrderModifyRow=OrderModifyRow.replace(TrailingStopRow.split(";")[0], '')
-                    print(TrailingStopRow + ";" + OrderModifyRow)
+                    #print(TrailingStopRow + ";" + OrderModifyRow)
                     OrderModifyRow = ""
                     flag_OrderModify = 0
                     continue
