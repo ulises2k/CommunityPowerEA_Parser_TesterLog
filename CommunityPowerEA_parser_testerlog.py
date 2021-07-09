@@ -64,8 +64,8 @@ DATA_FOLDER="9EB2973C469D24060397BB5158EA73A5"
 #LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\logs"
 LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
 now = datetime.now()
-#LogToday=now.strftime('%Y%m%d') + ".log"
-LogToday="20210708.log"
+LogToday=now.strftime('%Y%m%d') + ".log"
+LogToday="20210709.log"
 LogFile=os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
     print("File Not Found : " + os.path.join(LogDirectory, LogToday))
@@ -128,6 +128,12 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal4 = 1
                 SignalRow4 = (linea.split("   ")[0],) + SignalMatch4.groups() + ("SignalRow4",)
                 #print(SignalRow4)
+
+
+            #Signal to delete pending buy-order (indicator)!
+            #order canceled [#15 buy stop 1 EURUSD at 1.14479]
+            #|  OrderDelete( 15 ) - OK!
+
 
             #TrailingStop for BUY: 0 -> 1920.37
             TrailingStopRegex = re.compile(r'TrailingStop for ([A-Z]+): ([0-9]*[.]?[0-9]*) -> ([0-9]*[.]?[0-9]*)')
@@ -268,6 +274,11 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 stop_loss_triggeredRow = (linea.split("   ")[0],) + stop_loss_triggeredRegexMatch.groups() + ("stop_loss_triggeredRow",)
                 #print(stop_loss_triggeredRow)
 
+
+
+
+
+
             #---------------------------------------------------------------------------------------------------------------------------------------
             #Join the signal together with the order and market and position and etc.
             #---------------------------------------------------------------------------------------------------------------------------------------
@@ -291,21 +302,17 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in EA. Check Please!! Critical error-1")
                         exit()
 
-            #Signal to open buy #1 at 1.14034 (Stochastic K + IdentifyTrend + TDI)!
-            #market buy 1 EURUSD (1.14029 / 1.14034)
-            #deal #2 buy 1 EURUSD at 1.14034 done (based on order #2)
-            #deal performed [#2 buy 1 EURUSD at 1.14034]
-            #order performed buy 1 at 1.14034 [#2 buy 1 EURUSD at 1.14034]
-            #|  OrderSend( EURUSD, buy, 1.00, 1.14034, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
-
             if ((len(SignalRow) and len(marketRow) and len(OrderSendRow)) and (SignalRow[0] == marketRow[0]) and (marketRow[0] == OrderSendRow[0])):
                 if ((flag_Signal == 1) and (flag_market == 1) and (flag_OrderSend == 1)):
-                    #Signal to open buy #1 at 1935.010 (BigCandle)!
-                    #market buy 0.1 XAUUSD (1934.050 / 1935.010)
-                    #|  OrderSend( XAUUSD, buy, 0.10, 1935.010, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #2.
+                    #CommunityPower MT5 (EURUSD,M5)	2019.01.02 14:30:00   Signal to open buy #1 at 1.14034 (Stochastic K + IdentifyTrend + TDI)!
+                    #Trade	2019.01.02 14:30:00   market buy 0.1 EURUSD (1.14029 / 1.14034)
+                    #Trades	2019.01.02 14:30:00   deal #2 buy 0.1 EURUSD at 1.14034 done (based on order #2)
+                    #Trade	2019.01.02 14:30:00   deal performed [#2 buy 0.1 EURUSD at 1.14034]
+                    #Trade	2019.01.02 14:30:00   order performed buy 0.1 at 1.14034 [#2 buy 0.1 EURUSD at 1.14034]
+                    #CommunityPower MT5 (EURUSD,M5)	2019.01.02 14:30:00   |  OrderSend( EURUSD, buy, 0.10, 1.14034, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
                     #https://docs.mql4.com/trading/ordersend
-                    if (SignalRow[3] == OrderSendRow[8].split("#")[1]) and (SignalRow[2] == marketRow[1]) and (marketRow[1] == OrderSendRow[2].split(" ")[0]) and (marketRow[3] == OrderSendRow[1]):
-                        print(SignalRow[0] + ";Signal2 to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                    if (SignalRow[3] == OrderSendRow[8].split("#")[1]) and (SignalRow[2] == marketRow[1]) and (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
+                        print(SignalRow[0] + ";Signal2 to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         SignalRow = tuple()
                         marketRow = tuple()
                         OrderSendRow = tuple()
@@ -332,7 +339,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #|  OrderSend( XAUUSD, buy, 0.12, 1843.330, 50, 0.000, 0.000, "CP18.06.2021.21:03 #2", 234 ) - OK! Ticket #17.
                     #https://docs.mql4.com/trading/ordersend
                     if (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
-                        #print(SignalRow2[0] + ";Signal3 to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                        print(SignalRow2[0] + ";Signal3 to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         SignalRow2 = tuple()
                         marketRow = tuple()
                         OrderSendRow = tuple()
@@ -351,7 +358,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #|  OrderClose( 10, 0.10, 1.13414, 50 ) - OK!
                     #https://docs.mql4.com/trading/orderclose
                     if (marketRow2[5] == OrderCloseRow[1]):
-                        #print(SignalRow3[0] + ";Signal4 to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;" + OrderCloseRow[5]+ ";" + OrderCloseRow[1])
+                        print(SignalRow3[0] + ";Signal4 to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;" + OrderCloseRow[5]+ ";" + OrderCloseRow[1])
                         SignalRow3 = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
