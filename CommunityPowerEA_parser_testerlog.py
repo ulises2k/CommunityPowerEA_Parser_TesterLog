@@ -67,7 +67,7 @@ LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DA
 #LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
 now = datetime.now()
 LogToday=now.strftime('%Y%m%d') + ".log"
-LogToday="20210709.log"
+LogToday="20210708_TrailingStop.log"
 LogFile=os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
     print("File Not Found : " + os.path.join(LogDirectory, LogToday))
@@ -297,7 +297,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #Signal to open buy #1 at 1.14301 (Stochastic K + IdentifyTrend + TDI)!
                     #buy stop 1 EURUSD at 1.14301 (1.14029 / 1.14034)
                     #|  OrderSend( EURUSD, buy stop, 1.00, 1.14301, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
-                    if (SignalRow[4] == buy_sell_stopRow[3]) and (buy_sell_stopRow[3] == OrderSendRow[4]) and (SignalRow[3] == OrderSendRow[8].split("#")[1]):
+                    if (SignalRow[4] == buy_sell_stopRow[4]) and (buy_sell_stopRow[4] == OrderSendRow[4]) and (SignalRow[3] == OrderSendRow[8].split("#")[1]):
                         print(SignalRow[0] + ";Signal1 to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + buy_sell_stopRow[4] + ";" + buy_sell_stopRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         SignalRow = tuple()
                         buy_sell_stopRow = tuple()
