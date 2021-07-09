@@ -26,6 +26,7 @@ flag_Signal4 = 0
 flag_OrderSend = 0
 flag_OrderClose = 0
 flag_OrderModify = 0
+flag_OrderModify2 = 0
 flag_TrailingStop = 0
 flag_Modifying = 0
 flag_Moving = 0
@@ -45,6 +46,7 @@ SignalRow4 = ()
 OrderSendRow = ()
 OrderCloseRow = ()
 OrderModifyRow = ()
+OrderModifyRow2 = ()
 TrailingStopRow = ()
 ModifyingRow = ()
 MovingRow = ()
@@ -61,8 +63,8 @@ DATA_FOLDER="9EB2973C469D24060397BB5158EA73A5"
 #CUSTOM THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #LOG FILE
-#LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\logs"
-LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
+LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\logs"
+#LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
 now = datetime.now()
 LogToday=now.strftime('%Y%m%d') + ".log"
 LogToday="20210709.log"
@@ -121,7 +123,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 #print(SignalRow3)
 
             #Signal to open AutoHedge for buy-order #6 at 1.14407!
-            SignalRegex4 = re.compile(r'Signal to (open|close) ([a-zA-Z]+) for ([a-z-]+) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
+            SignalRegex4 = re.compile(r'Signal to (open|close) AutoHedge for ([a-z-]+) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
             SignalMatch4 = SignalRegex4.search(mensaje)
             if SignalMatch4 is not None:
                 # print(SignalMatch4.groups())
@@ -129,11 +131,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 SignalRow4 = (linea.split("   ")[0],) + SignalMatch4.groups() + ("SignalRow4",)
                 #print(SignalRow4)
 
-
             #Signal to delete pending buy-order (indicator)!
             #order canceled [#15 buy stop 1 EURUSD at 1.14479]
             #|  OrderDelete( 15 ) - OK!
-
 
             #TrailingStop for BUY: 0 -> 1920.37
             TrailingStopRegex = re.compile(r'TrailingStop for ([A-Z]+): ([0-9]*[.]?[0-9]*) -> ([0-9]*[.]?[0-9]*)')
@@ -217,16 +217,12 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             # |  OrderSend( XAUUSD, buy stop, 0.10, 1501.680, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - ERROR #10018 (Market is closed)!
 
             # PENDING TO DO
-            #Modifying TP for buy-order #743: 1.10987 -> 1.10993...
-            #failed modify #743 buy 1.7 EURUSDm# sl: 0.00000, tp: 1.10987 -> sl: 0.00000, tp: 1.10993 [Market closed]
-            #|  OrderModify( 743, 1.10723, 0.00000, 1.10993 ) - ERROR #10018 (Market is closed)!
-
-            # PENDING TO DO
             #Signal to open buy #6 at 1.09278 (BigCandle)!
             # Not enough money to open 16.40 lots EURUSDm#! 
 
             # PENDING TO DO
             #|  OrderModify( 681, 1.14788, 0.00000, 1.15021 ) - ERROR #10018 (Market is closed)!
+
 
             #market buy 0.1 XAUUSD (1934.050 / 1935.010)
             marketRegex = re.compile(r'market ([a-z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
@@ -264,6 +260,18 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_OrderModify = 1
                 OrderModifyRow = (linea.split("   ")[0],) + OrderModifyMatch.groups() + ("OrderModifyRow",)
                 #print(OrderModifyRow)
+
+            # ERROR ONLY. Use only to count
+            #|  OrderModify( 743, 1.10723, 0.00000, 1.10993 ) - ERROR #10018 (Market is closed)!
+            OrderModifyRegex2 = re.compile(r'\|  OrderModify\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*) \) - ([A-Z]+) \#([0-9]+) \(([a-zA-Z ]+)\)!')
+            OrderModifyMatch2 = OrderModifyRegex2.search(mensaje)
+            if OrderModifyMatch2 is not None:
+                #print(OrderModifyMatch2.groups())
+                flag_OrderModify2 = 1
+                OrderModifyRow2 = (linea.split("   ")[0],) + OrderModifyMatch2.groups() + ("OrderModifyRow2",)
+                #print(OrderModifyRow2)
+                OrderModifyRow2Count=OrderModifyRow2Count+1
+
 
             #stop loss triggered #7 sell 1 XAUUSD 1889.540 sl: 1881.920 tp: 1732.326 [#8 buy 1 XAUUSD at 1881.920]
             stop_loss_triggeredRegex = re.compile(r'stop loss triggered \#([0-9]*) ([a-z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) ([0-9]*[.]?[0-9]*) sl: ([0-9]*[.]?[0-9]*) tp: ([0-9]*[.]?[0-9]*) \[\#([0-9]*) ([a-z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) at ([0-9]*[.]?[0-9]*)\]')
@@ -339,7 +347,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #|  OrderSend( XAUUSD, buy, 0.12, 1843.330, 50, 0.000, 0.000, "CP18.06.2021.21:03 #2", 234 ) - OK! Ticket #17.
                     #https://docs.mql4.com/trading/ordersend
                     if (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
-                        print(SignalRow2[0] + ";Signal3 to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                        print(SignalRow2[0] + ";Signal3 to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         SignalRow2 = tuple()
                         marketRow = tuple()
                         OrderSendRow = tuple()
@@ -370,7 +378,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in EA. Check Please!! Critical error-4")
                         exit()
 
-            #Falta Chequear MEJOR
             if ((len(SignalRow4) and len(marketRow2) and len(OrderSendRow)) and (SignalRow4[0] == marketRow2[0]) and (marketRow2[0] == OrderSendRow[0])):
                 if ((flag_Signal4 == 1) and (flag_market2 == 1) and (flag_OrderSend == 1)):
                     #Signal to open AutoHedge for buy-order #6 at 1.14407!
@@ -380,8 +387,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #order performed sell 10.98 at 1.14407 [#191 sell 10.98 EURUSD at 1.14407]
                     #|  OrderSend( EURUSD, sell, 10.98, 1.14407, 50, 0.00000, 0.00000, "CP H6", 30471 ) - OK! Ticket #191.
                     #https://docs.mql4.com/trading/ordersend
-                    if (marketRow2[5] == OrderCloseRow[1]):
-                        print(SignalRow4[0] + ";Signal5 to " + SignalRow4[1] + ";" + OrderSendRow[2] + ";;" + SignalRow4[2] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";;;;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow [10] + ";" + OrderSendRow[11])
+                    pepe=OrderSendRow[8].split("H")[1]
+                    if (SignalRow4[3] == OrderSendRow[8].split("H")[1]) and (SignalRow4[4] == OrderSendRow[4]) and (marketRow2[3] == OrderSendRow[1]):
+                        print(SignalRow4[0] + ";Signal5 to " + SignalRow4[1] + " AutoHedge for " + SignalRow4[2] + ";" + OrderSendRow[2] + ";" + SignalRow4[3] + ";AutoHedge;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";;;;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow [10] + ";" + OrderSendRow[11])
                         SignalRow4 = tuple()
                         marketRow2 = tuple()
                         OrderSendRow = tuple()
@@ -462,6 +470,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             #order modified [#10 buy stop 1.01 EURUSD at 1.15179]
             #|  OrderModify( 10, 1.15179, 0.00000, 0.00000 ) - OK!
 
+#print("OrderModify() - ERROR # (Market is closed);" + str(OrderModifyRow2Count)
 
 
 #text_box.insert(tk.INSERT , match.groups())
