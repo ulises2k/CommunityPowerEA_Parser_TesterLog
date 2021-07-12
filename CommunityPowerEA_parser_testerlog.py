@@ -38,6 +38,7 @@ flag_market = 0
 flag_market2 = 0
 flag_buy_sell_stop = 0
 
+
 # Variables Clean
 SignalRow = ()
 SignalRow2 = ()
@@ -58,16 +59,19 @@ marketRow = ()
 marketRow2 = ()
 buy_sell_stopRow = ()
 
+# Variables Clean ERROR
+count_OrderModify = 0
+
 #CUSTOM THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 DATA_FOLDER="9EB2973C469D24060397BB5158EA73A5"
 #CUSTOM THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #LOG FILE
-LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\logs"
+LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
 #LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
 now = datetime.now()
 LogToday=now.strftime('%Y%m%d') + ".log"
-LogToday="20210708_TrailingStop.log"
+LogToday="20210705.log"
 LogFile=os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
     print("File Not Found : " + os.path.join(LogDirectory, LogToday))
@@ -91,6 +95,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
         if (int(year) >= 2000):
             mensaje = linea.split("   ")[1]
             #print (mensaje)
+
+            #ticks synchronization started
 
             #--------------------------------------------------------------------------------------------
             #SIGNAL
@@ -263,14 +269,14 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
 
             # ERROR ONLY. Use only to count
             #|  OrderModify( 743, 1.10723, 0.00000, 1.10993 ) - ERROR #10018 (Market is closed)!
-            OrderModifyRegex2 = re.compile(r'\|  OrderModify\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*) \) - ([A-Z]+) \#([0-9]+) \(([a-zA-Z ]+)\)!')
-            OrderModifyMatch2 = OrderModifyRegex2.search(mensaje)
-            if OrderModifyMatch2 is not None:
+            #OrderModifyRegex2 = re.compile(r'\|  OrderModify\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*) \) - ([A-Z]+) \#([0-9]+) \(([a-zA-Z ]+)\)!')
+            #OrderModifyMatch2 = OrderModifyRegex2.search(mensaje)
+            #if OrderModifyMatch2 is not None:
                 #print(OrderModifyMatch2.groups())
-                flag_OrderModify2 = 1
-                OrderModifyRow2 = (linea.split("   ")[0],) + OrderModifyMatch2.groups() + ("OrderModifyRow2",)
+                #flag_OrderModify2 = 1
+                #OrderModifyRow2 = (linea.split("   ")[0],) + OrderModifyMatch2.groups() + ("OrderModifyRow2",)
                 #print(OrderModifyRow2)
-                OrderModifyRow2Count=OrderModifyRow2Count+1
+                #count_OrderModify=count_OrderModify+1
 
 
             #stop loss triggered #7 sell 1 XAUUSD 1889.540 sl: 1881.920 tp: 1732.326 [#8 buy 1 XAUUSD at 1881.920]
@@ -364,9 +370,18 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #Signal to close sell (FIBO )!
                     #market buy 0.1 EURUSD, close #10 (1.13411 / 1.13414)
                     #|  OrderClose( 10, 0.10, 1.13414, 50 ) - OK!
+
+
+                    #Signal to close buy (Stochastic K + MACD )!
+                    #market sell 0.15 EURUSD, close #251 (1.12740 / 1.12746)
+                    #deal #252 sell 0.15 EURUSD at 1.12740 done (based on order #252)
+                    #deal performed [#252 sell 0.15 EURUSD at 1.12740]
+                    #order performed sell 0.15 at 1.12740 [#252 sell 0.15 EURUSD at 1.12740]
+                    #|  OrderClose( 251, 0.15, 1.12740, 50 ) - OK!
+
                     #https://docs.mql4.com/trading/orderclose
                     if (marketRow2[5] == OrderCloseRow[1]):
-                        print(SignalRow3[0] + ";Signal4 to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;" + OrderCloseRow[5]+ ";" + OrderCloseRow[1])
+                        print(SignalRow3[0] + ";Signal4 to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";;" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;;;;" + OrderCloseRow[5] + ";" + OrderCloseRow[1])
                         SignalRow3 = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
@@ -470,8 +485,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             #order modified [#10 buy stop 1.01 EURUSD at 1.15179]
             #|  OrderModify( 10, 1.15179, 0.00000, 0.00000 ) - OK!
 
-#print("OrderModify() - ERROR # (Market is closed);" + str(OrderModifyRow2Count)
+
+#print("OrderModify() - ERROR # (Market is closed);" + str(count_OrderModify)
 
 
-#text_box.insert(tk.INSERT , match.groups())
+# text_box.insert(tk.INSERT , match.groups())
 # window.mainloop()
