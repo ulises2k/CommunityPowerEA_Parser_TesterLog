@@ -1,2 +1,3 @@
-c:\Python38\python.exe CommunityPowerEA_parser_testerlog.py > 20210711.csv
-c:\Python38\python.exe CommunityPowerEA_convert_CSV_To_Excel.py -i 20210711.csv -o 20210711.xlsx
+set DATENOW=20210717
+c:\Python38\python.exe CommunityPowerEA_parser_testerlog.py > %DATENOW%.csv
+c:\Python38\python.exe CommunityPowerEA_convert_CSV_To_Excel.py -i %DATENOW%.csv -o %DATENOW%.xlsx
