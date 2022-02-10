@@ -118,7 +118,7 @@ count_OrderModify = 0
 # https://www.tutorialspoint.com/How-to-save-a-Python-Dictionary-to-CSV-file
 # HEADER CSV
 # print("Time;Action;Type;Martingale;Signal;Symbol;Volume;PriceAction;NewValue;Slippage;Value1;Value2;StopLoss;TakeProfit;Expiration;Comment;MagicID;Status;Ticket #")
-csv_columns = ['Time','Action','Type','Martingale','Signal','Symbol','Volume','PriceAction','NewValue','Slippage','Value1','Value2','StopLoss','TakeProfit','Expiration','Comment','MagicID','Status','Ticket #']
+csv_columns = ['Time','Action','Type','Martingale','Signal','Symbol','Volume','PriceAction','NewValue','Profit','Slippage','Value1','Value2','StopLoss','TakeProfit','Expiration','Comment','MagicID','Status','Ticket #']
 csv_row = [{}]
 file_uniqe = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 csv_file = file_uniqe + ".csv"
@@ -476,6 +476,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': buy_sell_stopRow[4],
                             'Value2': buy_sell_stopRow[5],
@@ -518,6 +519,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': marketRow[4],
                             'Value2': marketRow[5],
@@ -571,6 +573,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': marketRow[4],
                             'Value2': marketRow[5],
@@ -632,6 +635,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderCloseRow[2],
                             'PriceAction': OrderCloseRow[3],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
@@ -674,6 +678,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': '',
                             'Value2': '',
@@ -716,6 +721,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
                             'NewValue':'',
+                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': '',
                             'Value2': '',
@@ -1025,7 +1031,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'NewValue': f'Profit: {Partial_closeRow2[5]}',
+                            'NewValue': '',
+                            'Profit': f'Profit: {Partial_closeRow2[5]}',
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
@@ -1155,6 +1162,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         'Volume': stop_loss_triggeredRow[3],
                         'PriceAction': stop_loss_triggeredRow[12],
                         'NewValue':'',
+                        'Profit': '',
+                        'Profit': '',
                         'Slippage': '',
                         'Value1': stop_loss_triggeredRow[6],
                         'Value2': stop_loss_triggeredRow[7],
