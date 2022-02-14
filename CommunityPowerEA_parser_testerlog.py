@@ -46,84 +46,24 @@ else:
 
 now = datetime.now()
 LogToday = now.strftime('%Y%m%d') + ".log"
-#LogToday="20210705.log"
+#LogToday="ClosePartialHedge_20210727.log"
 LogFile = os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
-    print("File Not Found : " + os.path.join(LogDirectory, LogToday))
+    print(f"File Not Found : {LogFile}")
     exit()
 
 print("Reading file...")
 print(LogFile)
 
-# Flags
-flag_Magic = 0
-flag_Signal = 0
-flag_Signal2 = 0
-flag_Signal3 = 0
-flag_Signal4 = 0
-flag_Signal5 = 0
-flag_Signal6 = 0
-flag_Signal7 = 0
-flag_OrderSend = 0
-flag_OrderClose = 0
-flag_OrderModify = 0
-flag_OrderModify2 = 0
-flag_TrailingStop = 0
-flag_Modifying = 0
-flag_Moving = 0
-flag_position_modified = 0
-flag_position_modified2 = 0
-flag_order_modified = 0
-flag_stop_loss_triggered = 0
-flag_market = 0
-flag_market2 = 0
-flag_buy_sell_stop = 0
-flag_Global_TakeProfit = 0
-flag_Partial_close = 0
-flag_Partial_close2 = 0
 
-
-
-# Variables Clean
-SignalRow = ()
-SignalRow2 = ()
-SignalRow3 = ()
-SignalRow4 = ()
-SignalRow5 = ()
-SignalRow6 = ()
-SignalRow7 = ()
-OrderSendRow = ()
-OrderCloseRow = ()
-OrderModifyRow = ()
-OrderModifyRow2 = ()
-TrailingStopRow = ()
-ModifyingRow = ()
-MovingRow = ()
-position_modifiedRow = ()
-position_modifiedRow2 = ()
-order_modifiedRow = ()
-stop_loss_triggeredRow = ()
-marketRow = ()
-marketRow2 = ()
-buy_sell_stopRow = ()
-Global_TakeProfitRow = ()
-calculate_profitRow = ()
-Partial_closeRow = ()
-Partial_closeRow2 = ()
-close_order = 0
-
-# Variables Clean ERROR
-count_OrderModify = 0
-
-# https://www.tutorialspoint.com/How-to-save-a-Python-Dictionary-to-CSV-file
 # HEADER CSV
-# print("Time;Action;Type;Martingale;Signal;Symbol;Volume;PriceAction;NewValue;Slippage;Value1;Value2;StopLoss;TakeProfit;Expiration;Comment;MagicID;Status;Ticket #")
 csv_columns = ['Time','Action','Type','Martingale','Signal','Symbol','Volume','PriceAction','NewValue','Profit','Slippage','Value1','Value2','StopLoss','TakeProfit','Expiration','Comment','MagicID','Status','Ticket #']
 csv_row = [{}]
 file_uniqe = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 csv_file = file_uniqe + ".csv"
 excel_file = file_uniqe + ".xlsx"
 
+flag_Magic = 0
 
 # Iterate Log
 for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
@@ -167,7 +107,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             # print (mensaje)
 
             if not flag_Magic:
-                #2019.01.01 00:00:00   Magic v2020.07.22 launched...
+                # 2019.01.01 00:00:00   Magic v2020.07.22 launched...
                 MagicRegex = re.compile(r'Magic v([0-9]*[.][0-9]*[.][0-9]*) launched...')
                 MagicMatch = MagicRegex.search(mensaje)
                 if MagicMatch is not None:
@@ -175,13 +115,71 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_Magic = 1
                     MagicRow = (linea.split("   ")[0],) + ("MagicRow",)
                     # print(MagicRow)
-                    # print(MagicRow[0] + ";Initial Deposit " + calculate_profitRow[0] + " - leverage " + calculate_profitRow[1])
                     csv_row.append({'Time': MagicRow[0],'Action': f'Initial Deposit {calculate_profitRow[0]} - leverage {calculate_profitRow[1]}'})
+
+                    # Flags Initialization
+                    flag_Signal = 0
+                    flag_Signal2 = 0
+                    flag_Signal3 = 0
+                    flag_Signal4 = 0
+                    flag_Signal5 = 0
+                    flag_Signal6 = 0
+                    flag_Signal7 = 0
+                    flag_OrderSend = 0
+                    flag_OrderClose = 0
+                    flag_OrderModify = 0
+                    flag_OrderModify2 = 0
+                    flag_TrailingStop = 0
+                    flag_Modifying = 0
+                    flag_Moving = 0
+                    flag_position_modified = 0
+                    flag_position_modified2 = 0
+                    flag_order_modified = 0
+                    flag_stop_loss_triggered = 0
+                    flag_market = 0
+                    flag_market2 = 0
+                    flag_buy_sell_stop = 0
+                    flag_Global_TakeProfit = 0
+                    flag_Partial_close = 0
+                    flag_Partial_close2 = 0
+                    flag_Slippages = 0
+                    # Variables Clean
+                    SignalRow = ()
+                    SignalRow2 = ()
+                    SignalRow3 = ()
+                    SignalRow4 = ()
+                    SignalRow5 = ()
+                    SignalRow6 = ()
+                    SignalRow7 = ()
+                    OrderSendRow = ()
+                    OrderCloseRow = ()
+                    OrderModifyRow = ()
+                    OrderModifyRow2 = ()
+                    TrailingStopRow = ()
+                    ModifyingRow = ()
+                    MovingRow = ()
+                    position_modifiedRow = ()
+                    position_modifiedRow2 = ()
+                    order_modifiedRow = ()
+                    stop_loss_triggeredRow = ()
+                    marketRow = ()
+                    marketRow2 = ()
+                    buy_sell_stopRow = ()
+                    Global_TakeProfitRow = ()
+                    calculate_profitRow = ()
+                    Partial_closeRow = ()
+                    Partial_closeRow2 = ()
+                    SlippagesRow = ()
+                    close_order = 0
+                    close_order2 = 0
+                    # Variables Clean ERROR
+                    count_OrderModify = 0
 
             # --------------------------------------------------------------------------------------------
             # SIGNAL BEGIN
             # --------------------------------------------------------------------------------------------
             # Signal to open buy #1 at 1490.790 (BigCandle + IdentifyTrend + TDI)!
+            # Signal to open sell #1 at 1.14156 (Stochastic K + IdentifyTrend + TDI)!
             SignalRegex = re.compile(r'Signal to (open|close) (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*) \(([a-zA-Z+ ]+)\)!')
             SignalMatch = SignalRegex.search(mensaje)
             if SignalMatch is not None:
@@ -189,6 +187,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal = 1
                 SignalRow = (linea.split("   ")[0],) + SignalMatch.groups() + ("SignalRow",)
                 # print(SignalRow)
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
 
             # Signal to open buy #2 at 1885.770!
             SignalRegex2 = re.compile(r'Signal to (open|close) (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -198,6 +197,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal2 = 1
                 SignalRow2 = (linea.split("   ")[0],) + SignalMatch2.groups() + ("SignalRow2",)
                 # print(SignalRow2)
+                flag_Signal = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
 
             # Signal to close sell (FIBO )!
             # Signal to close sell (Stochastic K)!
@@ -208,6 +208,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal3 = 1
                 SignalRow3 = (linea.split("   ")[0],) + SignalMatch3.groups() + ("SignalRow3",)
                 # print(SignalRow3)
+                flag_Signal2 = flag_Signal = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
 
             # Signal to open AutoHedge for buy-order #6 at 1.14407!
             SignalRegex4 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -217,6 +218,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal4 = 1
                 SignalRow4 = (linea.split("   ")[0],) + SignalMatch4.groups() + ("SignalRow4",)
                 # print(SignalRow4)
+                flag_Signal2 = flag_Signal3 = flag_Signal = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
 
             # Signal to open anti-martingale buy #2 at 1.22464!
             SignalRegex5 = re.compile(r'Signal to (open|close) anti-martingale (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -226,16 +228,18 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal5 = 1
                 SignalRow5 = (linea.split("   ")[0],) + SignalMatch5.groups() + ("SignalRow5",)
                 # print(SignalRow5)
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal = flag_Signal6 = flag_Signal7 = 0
 
-            #FALTA COMPROBAR SI ANDA.
             #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
-            SignalRegex6 = re.compile(r'Signal to (open|close) (buy|sell) \(([a-zA-Z]+) after order \#([0-9]+) reached: ([a-zA-Z]+) = ([0-9]*[.]?[0-9]*) \)!')
+            #Signal to close sell (BreakEven after order #3 reached: Ask = 1.20893, op = 1.20904, MinProfit = 1.0)!
+            SignalRegex6 = re.compile(r'Signal to (open|close) (buy|sell) \(BreakEven after order \#([0-9]+) reached: ([a-zA-Z]+) = ([0-9]*[.]?[0-9]*), op = ([0-9]*[.]?[0-9]*), MinProfit = ([0-9]*[.]?[0-9]*)\)!')
             SignalMatch6 = SignalRegex6.search(mensaje)
             if SignalMatch6 is not None:
                 # print(SignalMatch6.groups())
                 flag_Signal6 = 1
                 SignalRow6 = (linea.split("   ")[0],) + SignalMatch6.groups() + ("SignalRow6",)
                 # print(SignalRow6)
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal = flag_Signal7 = 0
 
             #Signal to open AutoHedge for buy-order #1!
             SignalRegex7 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+)!')
@@ -245,6 +249,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal7 = 1
                 SignalRow7 = (linea.split("   ")[0],) + SignalMatch7.groups() + ("SignalRow7",)
                 # print(SignalRow7)
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal = 0
 
             # Signal to delete pending buy-order (indicator)!
             # order canceled [#15 buy stop 1 EURUSD at 1.14479]
@@ -320,6 +325,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_OrderSend = 1
                 OrderSendRow = (linea.split("   ")[0],) + OrderSendMatch.groups() + ("OrderSendRow",)
                 # print(OrderSendRow)
+                # https://docs.mql4.com/trading/ordersend
 
             # PENDING TO DO
             # Moving buy-stop order #10 to the new level (1.15191 -> 1.15179)...
@@ -361,6 +367,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 marketRow = (linea.split("   ")[0],) + marketRegexMatch.groups() + ("marketRow",)
                 # print(marketRow)
 
+
             # market buy 0.1 EURUSD, close #10 (1.13411 / 1.13414)
             marketRegex2 = re.compile(r'market (buy|sell) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+), ([a-z]+) \#([0-9]*) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
             marketRegexMatch2 = marketRegex2.search(mensaje)
@@ -370,6 +377,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 marketRow2 = (linea.split("   ")[0],) + marketRegexMatch2.groups() + ("marketRow2",)
                 # print(marketRow2)
 
+
+            # https://docs.mql4.com/trading/orderclose
             # |  OrderClose( 272, 1.48, 1.06957, 50 ) - OK!
             OrderCloseRegex = re.compile(r'\|  OrderClose\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*) \) - ([A-Z]+)!')
             OrderCloseMatch = OrderCloseRegex.search(mensaje)
@@ -432,7 +441,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(Global_AccountRow)
 
 
-            #ClosePartialHedge_20210727.log
+            # ClosePartialHedge_20210727.log
             #Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
             Partial_closeRegex = re.compile(r'Partial close hedge: closing ([0-9]+) profit order \(\$([\+\-0-9]*[.]?[0-9]*)\) \+ ([0-9]+) opposite loss order \(\$([\+\-0-9]*[.]?[0-9]*)\) with total profit \$([\+\-0-9]*[.]?[0-9]*)!')
             Partial_closeRegexMatch = Partial_closeRegex.search(mensaje)
@@ -440,25 +449,44 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(Partial_closeRegexMatch.groups())
                 flag_Partial_close = 1
                 Partial_closeRow = (linea.split("   ")[0],) + Partial_closeRegexMatch.groups() + ("Partial_closeRow",)
-                #print(Partial_closeRow)
+                # print(Partial_closeRow)
+                # Reset all signal
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
 
 
             #Partial close any: closing 2 profit orders ($+266.05) + 1 loss order ($-166.00) with total profit $+100.05!
             Partial_closeRegex2 = re.compile(r'Partial close any: closing ([0-9]+) profit orders \(\$([\+\-0-9]*[.]?[0-9]*)\) \+ ([0-9]+) loss order \(\$([\+\-0-9]*[.]?[0-9]*)\) with total profit \$([\+\-0-9]*[.]?[0-9]*)!')
             Partial_closeRegexMatch2 = Partial_closeRegex2.search(mensaje)
             if Partial_closeRegexMatch2 is not None:
-                # print(Partial_closeRegexMatch.groups())
+                # print(Partial_closeRegexMatch2.groups())
                 flag_Partial_close2 = 1
-                Partial_closeRow2 = (linea.split("   ")[0],) + Partial_closeRegexMatch2.groups() + ("Partial_closeRow",)
-                #print(Partial_closeRow)
+                Partial_closeRow2 = (linea.split("   ")[0],) + Partial_closeRegexMatch2.groups() + ("Partial_closeRow2",)
+                # print(Partial_closeRow2)
+                # Reset all signal
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = 0
+
+            #Slippages: order #8 (0.02 lots): Market Enter at 1.09587 executed at 1.09587, slippage = -0.0 p, spread = 0.50 p, last ping = 0.0 ms, latency = 1.8 ms!
+            #Slippages: order #9 (0.04 lots): Market Exit at 1.09592 executed at 1.09592, slippage = -0.0 p, spread = 0.50 p, last ping = 0.0 ms, latency = 1.9 ms!
+            #Slippages: order #3 (0.09 lots): Market Enter at 1.11752 executed at 1.11752, slippage = 0.0 p, spread = 0.30 p, last ping = 0.0 ms, latency = 1.8 ms!
+            SlippagesRegex = re.compile(r'Slippages: order \#([0-9]*) \(([0-9]*[.]?[0-9]*) lots\): Market (Enter|Exit) at ([0-9]*[.]?[0-9]*) executed at ([0-9]*[.]?[0-9]*), slippage = -([0-9]*[.]?[0-9]*) p, spread = ([0-9]*[.]?[0-9]*) p, last ping = ([0-9]*[.]?[0-9]*) ms, latency = ([0-9]*[.]?[0-9]*) ms!')
+            SlippagesRegexMatch = SlippagesRegex.search(mensaje)
+            if SlippagesRegexMatch is not None:
+                # print(SlippagesRegexMatch.groups())
+                flag_Slippages = 1
+                SlippagesRow = (linea.split("   ")[0],) + SlippagesRegexMatch.groups() + ("SlippagesRow",)
+                # print(SlippagesRow)
 
 
+            # Signal to open sell #1 at 1.14156 (Stochastic K + IdentifyTrend + TDI)!
+            # sell stop 1.02 EURUSD at 1.14156 (1.14297 / 1.14301)
+            # |  OrderSend( EURUSD, sell stop, 1.02, 1.14156, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #50.
 
 
             # ---------------------------------------------------------------------------------------------------------------------------------------
             # Join the signal together with the order and market and position and etc.
             # ---------------------------------------------------------------------------------------------------------------------------------------
             # Don't Touch. Working
+            # Signal to open buy #1 at 1.14301 (Stochastic K + IdentifyTrend + TDI)!
             if ((len(SignalRow) and len(buy_sell_stopRow) and len(OrderSendRow)) and (SignalRow[0] == buy_sell_stopRow[0]) and (buy_sell_stopRow[0] == OrderSendRow[0])):
                 if ((flag_Signal == 1) and (flag_buy_sell_stop == 1) and (flag_OrderSend == 1)):
                     # Complete
@@ -466,8 +494,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # buy stop 1 EURUSD at 1.14301 (1.14029 / 1.14034)
                     # |  OrderSend( EURUSD, buy stop, 1.00, 1.14301, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
                     if (SignalRow[4] == buy_sell_stopRow[4]) and (buy_sell_stopRow[4] == OrderSendRow[4]) and (SignalRow[3] == OrderSendRow[8].split("#")[1]):
-                        # print(SignalRow[0] + ";Signal1 to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + buy_sell_stopRow[4] + ";" + buy_sell_stopRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
-                        csv_row.update({'Time': SignalRow[0],
+                        csv_row.append({'Time': SignalRow[0],
                             'Action': f'Signal1 to {SignalRow[1]}',
                             'Type': SignalRow[2],
                             'Martingale': SignalRow[3],
@@ -475,14 +502,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': buy_sell_stopRow[4],
                             'Value2': buy_sell_stopRow[5],
-                            'StopLoss':'',
-                            'TakeProfit':'',
-                            'Expiration':'',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -509,7 +531,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # CommunityPower MT5 (EURUSD,M5)	2019.01.02 14:30:00   |  OrderSend( EURUSD, buy, 0.10, 1.14034, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
                     # https://docs.mql4.com/trading/ordersend
                     if (SignalRow[3] == OrderSendRow[8].split("#")[1]) and (SignalRow[2] == marketRow[1]) and (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
-                        # print(SignalRow[0] + ";Signal2 to " + SignalRow[1] + ";" + SignalRow[2] + ";" + SignalRow[3] + ";" + SignalRow[5] + ";" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         csv_row.append({'Time': SignalRow[0],
                             'Action': f'Signal2 to {SignalRow[1]}',
                             'Type': SignalRow[2],
@@ -518,14 +539,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': marketRow[4],
                             'Value2': marketRow[5],
-                            'StopLoss':'',
-                            'TakeProfit':'',
-                            'Expiration':'',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -540,10 +556,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     else:
                         print("Error in Script. Check Log!! Critical error-2")
                         exit()
-
-            # Signal to open sell #1 at 1.14156 (Stochastic K + IdentifyTrend + TDI)!
-            # sell stop 1.02 EURUSD at 1.14156 (1.14297 / 1.14301)
-            # |  OrderSend( EURUSD, sell stop, 1.02, 1.14156, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #50.
 
             #Signal to open buy #2 at 1.11817!
             if ((len(SignalRow2) and len(marketRow) and len(OrderSendRow)) and (SignalRow2[0] == marketRow[0]) and (marketRow[0] == OrderSendRow[0])):
@@ -563,23 +575,16 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #2021.07.27 20:09:48.872	2020.01.07 13:52:31   |  OrderSend( EURUSD, buy, 0.08, 1.11817, 50, 0.00000, 0.00000, "CP19.07.2021.00:25 #2", 235 ) - OK! Ticket #111.
 
                     if (SignalRow2[1] == "open") and (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
-                        # print(SignalRow2[0] + ";Signal3 to " + SignalRow2[1] + ";" + SignalRow2[2] + ";" + SignalRow2[3] + ";;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";" + marketRow[4] + ";" + marketRow[5] + ";;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
                         csv_row.append({'Time': SignalRow2[0],
                             'Action': 'Signal3 to ' + SignalRow2[1],
                             'Type': SignalRow2[2],
                             'Martingale': SignalRow2[3],
-                            'Signal': '',
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderSendRow[5],
                             'Value1': marketRow[4],
                             'Value2': marketRow[5],
-                            'StopLoss':'',
-                            'TakeProfit':'',
-                            'Expiration':'',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -587,9 +592,14 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         SignalRow2 = tuple()
                         marketRow = tuple()
                         OrderSendRow = tuple()
-                        #flag_Signal2 = 0 (not reset flag)
+                        # flag_Signal2 = 0 (not reset flag)
                         flag_market = 0
                         flag_OrderSend = 0
+
+                        # Reset other signal
+                        flag_Signal3 = 0
+                        SignalRow3 = tuple()
+
                         continue
                     else:
                         print("Error in Script. Check Log!! Critical error-3")
@@ -625,51 +635,41 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # 2021.07.19 15:33:45.029	2019.01.03 13:50:00   |  OrderClose( 18, 0.07, 1.13435, 50 ) - OK!
                     # https://docs.mql4.com/trading/orderclose
                     if (SignalRow3[1] == "close") and (marketRow2[5] == OrderCloseRow[1]):
-                        # print(SignalRow3[0] + ";Signal4 to " + SignalRow3[1] + ";" + SignalRow3[2] + ";;" + SignalRow3[3] + ";" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";;" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";;;;;;" + OrderCloseRow[5] + ";" + OrderCloseRow[1])
-                        csv_row.append({'Time': SignalRow[0],
+                        csv_row.append({'Time': SignalRow3[0],
                             'Action': f'Signal4 to {SignalRow3[1]}',
                             'Type':  SignalRow3[2],
-                            'Martingale': '',
                             'Signal': SignalRow3[3],
-                            'Symbol': marketRow2[3],
-                            'Volume': OrderCloseRow[2],
+                            'Symbol': marketRow2[4],
+                            'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
-                            'StopLoss': '',
-                            'TakeProfit':'',
-                            'Expiration':'',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
                         # SignalRow3 = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
-                        #flag_Signal3 = 0 (not reset flag)
+                        # flag_Signal3 = 0 (not reset flag)
                         flag_market2 = 0
                         flag_OrderClose = 0
                         continue
                     else:
                         print("Error in Script. Check Log!! Critical error-4")
-                        exit()
+                        continue
+                        # exit()
 
             #Signal to open AutoHedge for buy-order #6 at 1.14407!
             if ((len(SignalRow4) and len(marketRow) and len(OrderSendRow)) and (SignalRow4[0] == marketRow[0]) and (marketRow[0] == OrderSendRow[0])):
                 if ((flag_Signal4 == 1) and (flag_market2 == 1) and (flag_OrderSend == 1)):
-                    # Signal to open AutoHedge for buy-order #6 at 1.14407!
-                    # market sell 10.98 EURUSD (1.14407 / 1.14410)
-                    # deal #162 sell 10.98 EURUSD at 1.14407 done (based on order #191)
-                    # deal performed [#162 sell 10.98 EURUSD at 1.14407]
-                    # order performed sell 10.98 at 1.14407 [#191 sell 10.98 EURUSD at 1.14407]
-                    # |  OrderSend( EURUSD, sell, 10.98, 1.14407, 50, 0.00000, 0.00000, "CP H6", 30471 ) - OK! Ticket #191.
-                    # https://docs.mql4.com/trading/ordersend
+                    #SignalRow4    #2021.06.01 10:30:16   Signal to open AutoHedge for sell-order #1!
+                    #marketRow     #2021.06.01 10:30:16   market buy 1 USDCAD (1.20365 / 1.20384)
+                    #              #2021.06.01 10:30:16   deal #3 buy 1 USDCAD at 1.20384 done (based on order #3)
+                    #              #2021.06.01 10:30:16   deal performed [#3 buy 1 USDCAD at 1.20384]
+                    #              #2021.06.01 10:30:16   order performed buy 1 at 1.20384 [#3 buy 1 USDCAD at 1.20384]
+                    #OrderSendRow  #2021.06.01 10:30:16   |  OrderSend( USDCAD, buy, 1.0, 1.20384, 50, 0.00000, 0.00000, "ZIGZAG #H1", 2431 ) - OK! Ticket #3.
                     if (SignalRow4[3] == OrderSendRow[8].split("#H")[1]) and (SignalRow4[4] == OrderSendRow[4]) and (marketRow[3] == OrderSendRow[1]):
-                        # print(SignalRow4[0] + ";Signal5 to " + SignalRow4[1] + ";" + OrderSendRow[2] + ";" + SignalRow4[3] + ";AutoHedge;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";;;;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
-                        csv_row.append({'Time': SignalRow[0],
+                        csv_row.append({'Time': SignalRow4[0],
                             'Action': f'Signal5 to {SignalRow4[1]}',
                             'Type': OrderSendRow[2],
                             'Martingale': SignalRow4[3],
@@ -677,14 +677,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderSendRow[5],
-                            'Value1': '',
-                            'Value2': '',
-                            'StopLoss':'',
-                            'TakeProfit':'',
-                            'Expiration':'',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -711,8 +704,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # |  OrderSend( EURUSD, buy, 0.15, 1.22464, 50, 0.00000, 0.00000, "CP16.07.2021.16:19 #-2", 234 ) - OK! Ticket #13.
                     # https://docs.mql4.com/trading/ordersend
                     if (SignalRow5[3] == OrderSendRow[8].split("#-")[1]) and (SignalRow5[4] == OrderSendRow[4]) and (marketRow[3] == OrderSendRow[1]):
-                        # print(SignalRow5[0] + ";Signal6 to " + SignalRow5[1] + ";" + OrderSendRow[2] + ";-" + SignalRow5[3] + ";anti-martingale;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";;" + OrderSendRow[5] + ";;;;;;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
-                        csv_row.append({'Time': SignalRow[0],
+                        csv_row.append({'Time': SignalRow5[0],
                             'Action': f'Signal6 to {SignalRow5[1]}',
                             'Type': OrderSendRow[2],
                             'Martingale': SignalRow5[3],
@@ -720,14 +712,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue':'',
-                            'Profit': '',
                             'Slippage': OrderSendRow[5],
-                            'Value1': '',
-                            'Value2': '',
-                            'StopLoss':'',
-                            'TakeProfit':'',
-                            'Expiration':'',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -743,33 +728,86 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in Script. Check Log!! Critical error-6")
                         exit()
 
-            #NO TERMINADO
+            #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
+            #Signal to close sell (BreakEven after order #3 reached: Ask = 1.20893, op = 1.20904, MinProfit = 1.0)!
+            if ((len(SignalRow6) and len(marketRow2) and len(OrderCloseRow)) and (SignalRow6[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_Signal6 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #SignalRow6         #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
+                    #marketRow2         #market sell 0.13 EURUSD, close #26 (1.18534 / 1.18555)
+                    #                   #deal #30 sell 0.13 EURUSD at 1.18534 done (based on order #30)
+                    #                   #deal performed [#30 sell 0.13 EURUSD at 1.18534]
+                    #                   #order performed sell 0.13 at 1.18534 [#30 sell 0.13 EURUSD at 1.18534]
+                    #OrderCloseRow      #|  OrderClose( 26, 0.13, 1.18534, 50 ) - OK!
+                    #marketRow2         #market sell 0.11 EURUSD, close #14 (1.18534 / 1.18555)
+                    #                   #deal #31 sell 0.11 EURUSD at 1.18534 done (based on order #31)
+                    #                   #deal performed [#31 sell 0.11 EURUSD at 1.18534]
+                    #                   #order performed sell 0.11 at 1.18534 [#31 sell 0.11 EURUSD at 1.18534]
+                    #OrderCloseRow      #|  OrderClose( 14, 0.11, 1.18534, 50 ) - OK!
+                    #marketRow2         #market sell 0.09 EURUSD, close #13 (1.18534 / 1.18555)
+                    #                   #deal #32 sell 0.09 EURUSD at 1.18534 done (based on order #32)
+                    #                   #deal performed [#32 sell 0.09 EURUSD at 1.18534]
+                    #                   #order performed sell 0.09 at 1.18534 [#32 sell 0.09 EURUSD at 1.18534]
+                    #OrderCloseRow      #|  OrderClose( 13, 0.09, 1.18534, 50 ) - OK!
+                    #marketRow2         #market sell 0.08 EURUSD, close #12 (1.18534 / 1.18555)
+                    #                   #deal #33 sell 0.08 EURUSD at 1.18534 done (based on order #33)
+                    #                   #deal performed [#33 sell 0.08 EURUSD at 1.18534]
+                    #                   #order performed sell 0.08 at 1.18534 [#33 sell 0.08 EURUSD at 1.18534]
+                    #OrderCloseRow      #|  OrderClose( 12, 0.08, 1.18534, 50 ) - OK!
+                    #marketRow2         #market buy 3.93 EURUSD, close #27 (1.18534 / 1.18555)
+                    #                   #deal #34 buy 3.93 EURUSD at 1.18555 done (based on order #34)
+                    #                   #deal performed [#34 buy 3.93 EURUSD at 1.18555]
+                    #                   #order performed buy 3.93 at 1.18555 [#34 buy 3.93 EURUSD at 1.18555]
+                    #OrderCloseRow      #|  OrderClose( 27, 3.93, 1.18555, 50 ) - OK!
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]):
+                        csv_row.append({'Time': SignalRow6[0],
+                            'Action': f'Signal7 to {SignalRow6[1]}',
+                            'Type': SignalRow6[2],
+                            'Signal': 'BreakEven',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'Profit': f'MinProfit: {SignalRow6[7]}',
+                            'Slippage': OrderCloseRow[4],
+                            'TakeProfit': SignalRow6[5],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-7.1")
+                        exit()
+
+
             #Signal to open AutoHedge for buy-order #1!
+            #Signal to open AutoHedge for sell-order #1!
             if ((len(SignalRow7) and len(marketRow) and len(OrderSendRow)) and (SignalRow7[0] == marketRow[0]) and (marketRow[0] == OrderSendRow[0])):
                 if ((flag_Signal7 == 1) and (flag_market == 1) and (flag_OrderSend == 1)):
-                    #Signal to open AutoHedge for buy-order #1!
-                    #market sell 0.65 EURUSD (1.11845 / 1.11848)
-                    #deal #17 sell 0.65 EURUSD at 1.11845 done (based on order #17)
-                    #deal performed [#17 sell 0.65 EURUSD at 1.11845]
-                    #order performed sell 0.65 at 1.11845 [#17 sell 0.65 EURUSD at 1.11845]
-                    #|  OrderSend( EURUSD, sell, 0.65, 1.11845, 50, 0.00000, 0.00000, "CP28.01.2022.09:58 #H1", 2421 ) - OK! Ticket #17.
-                    if (SignalRow7[3] == OrderSendRow[8].split("#H")[1]) and (SignalRow7[4] == OrderSendRow[4]) and (marketRow[3] == OrderSendRow[1]):
-                        # print(SignalRow7[0] + ";Signal7 to " + SignalRow7[1] + ";" + OrderSendRow[2] + ";" + SignalRow7[3] + ";AutoHedge;" + OrderSendRow[1] + ";" + OrderSendRow[3] + ";" + OrderSendRow[4] + ";NewValue;" + OrderSendRow[5] + ";Value1;Value2;StopLoss;TakeProfit;Expiration;" + OrderSendRow[8] + ";" + OrderSendRow[9] + ";" + OrderSendRow[10] + ";" + OrderSendRow[11])
+                    #SignalRow7         #Signal to open AutoHedge for buy-order #1!
+                    #marketRow          #market sell 0.65 EURUSD (1.11845 / 1.11848)
+                    #                   #deal #17 sell 0.65 EURUSD at 1.11845 done (based on order #17)
+                    #                   #deal performed [#17 sell 0.65 EURUSD at 1.11845]
+                    #                   #order performed sell 0.65 at 1.11845 [#17 sell 0.65 EURUSD at 1.11845]
+                    #OrderSendRow       #|  OrderSend( EURUSD, sell, 0.65, 1.11845, 50, 0.00000, 0.00000, "CP28.01.2022.09:58 #H1", 2421 ) - OK! Ticket #17.
+
+                    #SignalRow7         #2021.06.01 10:30:16   Signal to open AutoHedge for sell-order #1!
+                    #marketRow          #2021.06.01 10:30:16   market buy 1 USDCAD (1.20365 / 1.20384)
+                    #                   #2021.06.01 10:30:16   deal #3 buy 1 USDCAD at 1.20384 done (based on order #3)
+                    #                   #2021.06.01 10:30:16   deal performed [#3 buy 1 USDCAD at 1.20384]
+                    #                   #2021.06.01 10:30:16   order performed buy 1 at 1.20384 [#3 buy 1 USDCAD at 1.20384]
+                    #OrderSendRow       #2021.06.01 10:30:16   |  OrderSend( USDCAD, buy, 1.0, 1.20384, 50, 0.00000, 0.00000, "ZIGZAG #H1", 2431 ) - OK! Ticket #3.
+                    if (SignalRow7[3] == OrderSendRow[8].split("#H")[1]) and (marketRow[3] == OrderSendRow[1]):
                         csv_row.append({'Time': SignalRow7[0],
-                            'Action': f'Signal7 to {SignalRow7[1]}',
+                            'Action': f'Signal8 to {SignalRow7[1]}',
                             'Type': OrderSendRow[2],
                             'Martingale': SignalRow7[3],
                             'Signal': 'AutoHedge',
                             'Symbol': OrderSendRow[1],
                             'Volume': OrderSendRow[3],
                             'PriceAction': OrderSendRow[4],
-                            'NewValue': '',
                             'Slippage': OrderSendRow[5],
-                            'Value1': '',
-                            'Value2': '',
-                            'StopLoss': '',
-                            'TakeProfit': '',
-                            'Expiration': '',
                             'Comment': OrderSendRow[8],
                             'MagicID': OrderSendRow[9],
                             'Status': OrderSendRow[10],
@@ -778,7 +816,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         marketRow = tuple()
                         OrderSendRow = tuple()
                         flag_Signal7 = 0
-                        flag_market2 = 0
+                        flag_market = 0
                         flag_OrderSend = 0
                         continue
                     else:
@@ -786,36 +824,29 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         exit()
 
 
-
             #Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
             if ((len(Global_TakeProfitRow) and len(marketRow2) and len(OrderCloseRow)) and (Global_TakeProfitRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
                 if ((flag_Global_TakeProfit == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
-                    # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
-                    # market buy 0.13 EURUSD, close #5 (1.22325 / 1.22340)
-                    # deal #8 buy 0.13 EURUSD at 1.22340 done (based on order #8)
-                    # deal performed [#8 buy 0.13 EURUSD at 1.22340]
-                    # order performed buy 0.13 at 1.22340 [#8 buy 0.13 EURUSD at 1.22340]
-                    # |  OrderClose( 5, 0.13, 1.22340, 50 ) - OK!
+                    #Global_TakeProfitRow       # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
+                    #marketRow2                 # market buy 0.13 EURUSD, close #5 (1.22325 / 1.22340)
+                    #                           # deal #8 buy 0.13 EURUSD at 1.22340 done (based on order #8)
+                    #                           # deal performed [#8 buy 0.13 EURUSD at 1.22340]
+                    #                           # order performed buy 0.13 at 1.22340 [#8 buy 0.13 EURUSD at 1.22340]
+                    #OrderCloseRow              # |  OrderClose( 5, 0.13, 1.22340, 50 ) - OK!
                     # buy
-                    if (marketRow2[2] == OrderCloseRow[2]) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
-                        # print(Global_TakeProfitRow[0] + ";Global TakeProfit " + Global_TakeProfitRow[1] + "% -> $" + Global_TakeProfitRow[3] + ";" + marketRow2[1] + ";Martingale;Global TakeProfit;" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";NewValue;" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";StopLoss;" + OrderCloseRow[3] + ";Expiration;Comment;MagicID;" + OrderCloseRow[5] + ";" + OrderCloseRow[1])
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
                         csv_row.append({'Time': Global_TakeProfitRow[0],
                             'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> ${Global_TakeProfitRow[3]}',
                             'Type': marketRow2[1],
-                            'Martingale': '',
                             'Signal': 'Global TakeProfit',
                             'Symbol': marketRow2[3],
-                            'Volume': OrderCloseRow[2],
+                            'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'NewValue': '',
+                            'Profit': Global_TakeProfitRow[2],
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
-                            'StopLoss': '',
                             'TakeProfit': OrderCloseRow[3],
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
                         Global_TakeProfitRow = tuple()
@@ -825,33 +856,26 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_market2 = 0
                         flag_OrderClose = 0
                         continue
-                    # sell
                     # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
                     # market sell 0.17 EURUSD, close #6 (1.22325 / 1.22340)
                     # deal #7 sell 0.17 EURUSD at 1.22325 done (based on order #7)
                     # deal performed [#7 sell 0.17 EURUSD at 1.22325]
                     # order performed sell 0.17 at 1.22325 [#7 sell 0.17 EURUSD at 1.22325]
                     # |  OrderClose( 6, 0.17, 1.22325, 50 ) - OK!
-                    # https://docs.mql4.com/trading/orderclose
-                    elif (marketRow2[2] == OrderCloseRow[2]) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
-                        # print(Global_TakeProfitRow[0] + ";Global TakeProfit " + Global_TakeProfitRow[1] + "% -> $" + Global_TakeProfitRow[3] + ";" + marketRow2[1] + ";Martingale;Global TakeProfit;" + marketRow2[3] + ";" + OrderCloseRow[2] + ";" + OrderCloseRow[3] + ";NewValue;" + OrderCloseRow[4] + ";" + marketRow2[6] + ";" + marketRow2[7] + ";StopLoss;" + OrderCloseRow[3] + ";Expiration;Comment;MagicID;" + OrderCloseRow[5] + ";" + OrderCloseRow[1])
+                    # sell
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
                         csv_row.append({'Time': Global_TakeProfitRow[0],
                             'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> $ {Global_TakeProfitRow[3]}',
                             'Type': marketRow2[1],
-                            'Martingale': '',
                             'Signal': 'Global TakeProfit',
                             'Symbol': marketRow2[3],
-                            'Volume': OrderCloseRow[2],
+                            'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'NewValue': '',
+                            'Profit': Global_TakeProfitRow[2],
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
-                            'StopLoss': '',
                             'TakeProfit': OrderCloseRow[3],
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
                         Global_TakeProfitRow = tuple()
@@ -866,7 +890,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         exit()
 
 
-            #Modifying SL for sell-order #86: 0.00000 -> 1.17551...
+            # Modifying SL for sell-order #86: 0.00000 -> 1.17551...
+            # Modifying TP for sell-order #437: 0.00000 -> 1.19366...
             if ((len(ModifyingRow) and len(position_modifiedRow) and len(OrderModifyRow)) and (ModifyingRow[0] == position_modifiedRow[0]) and (position_modifiedRow[0] == OrderModifyRow[0])):
                 if ((flag_Modifying == 1) and (flag_position_modified == 1) and (flag_OrderModify == 1)):
                     # Modifying SL for sell-order #86: 0.00000 -> 1.17551...
@@ -878,24 +903,15 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #2021.07.27 20:09:48.874	2020.01.07 13:52:31   position modified [#111 buy 0.08 EURUSD 1.11817 sl: 1.08607 tp: 1.12231]
                     #2021.07.27 20:09:48.876	2020.01.07 13:52:31   |  OrderModify( 111, 1.11817, 1.08607, 1.12231 ) - OK!
                     if (ModifyingRow[3] == position_modifiedRow[1]) and (position_modifiedRow[1] == OrderModifyRow[1]) and (ModifyingRow[3] == OrderModifyRow[1]):
-                        # print(ModifyingRow[0] + ";Modifying " + ModifyingRow[1] + ";" + position_modifiedRow[2] + ";Martingale;Signal;" + position_modifiedRow[4] + ";" + position_modifiedRow[3] + ";" + OrderModifyRow[2] + ";" + ModifyingRow[5] + ";Slippage;Value1;Value2;" + OrderModifyRow[3] + ";" + OrderModifyRow[4] + ";Expiration;Comment;MagicID;" + OrderModifyRow[5] + ";" + OrderModifyRow[1])
                         csv_row.append({'Time': ModifyingRow[0],
                             'Action': f'Modifying {ModifyingRow[1]}',
                             'Type': position_modifiedRow[2],
-                            'Martingale': '',
-                            'Signal': '',
                             'Symbol': position_modifiedRow[4],
                             'Volume': position_modifiedRow[3],
                             'PriceAction': OrderModifyRow[2],
                             'NewValue': ModifyingRow[5],
-                            'Slippage': '',
-                            'Value1': '',
-                            'Value2': '',
                             'StopLoss': OrderModifyRow[3],
                             'TakeProfit': OrderModifyRow[4],
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderModifyRow[5],
                             'Ticket #': OrderModifyRow[1]})
                         ModifyingRow = tuple()
@@ -907,7 +923,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         continue
                     else:
                         print("Error in Script. Check Log!! Critical error-8")
-                        exit()
+                        continue
+                        # exit()
 
 
             #Moving buy-stop order #10 to the new level (1.15191 -> 1.15179)...
@@ -918,24 +935,15 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # |  OrderModify( 10, 1.15179, 0.00000, 0.00000 ) - OK!
                     # https://docs.mql4.com/trading/ordermodify
                     if (MovingRow[2] == order_modifiedRow[1]) and (order_modifiedRow[1] == OrderModifyRow[1]) and (MovingRow[4] == order_modifiedRow[5]) and (order_modifiedRow[5] == OrderModifyRow[2]):
-                        # print(MovingRow[0] + ";Moving " + MovingRow[1] + ";" + order_modifiedRow[2] + ";Martingale;Signal;" + order_modifiedRow[4] + ";" + order_modifiedRow[3] + ";" + MovingRow[3] + ";" + MovingRow[4] + ";Slippage;Value1;Value2;" + OrderModifyRow[3] + ";" + OrderModifyRow[4] + ";Expiration;Comment;MagicID;" + OrderModifyRow[5] + ";" + OrderModifyRow[1])
                         csv_row.append({'Time': MovingRow[0],
                             'Action': f'Moving {MovingRow[1]}',
                             'Type': order_modifiedRow[2],
-                            'Martingale': '',
-                            'Signal': '',
                             'Symbol': order_modifiedRow[4],
                             'Volume': order_modifiedRow[3],
                             'PriceAction': MovingRow[3],
                             'NewValue': MovingRow[4],
-                            'Slippage': '',
-                            'Value1': '',
-                            'Value2': '',
                             'StopLoss': OrderModifyRow[3],
                             'TakeProfit': OrderModifyRow[4],
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderModifyRow[5],
                             'Ticket #': OrderModifyRow[1]})
                         MovingRow = tuple()
@@ -949,63 +957,76 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in Script. Check Log!! Critical error-9")
                         exit()
 
-
-
-
-
-
-            #FALTA TERMINAR
+            # Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
             if ((len(Partial_closeRow) and len(marketRow2) and len(OrderCloseRow)) and ( (Partial_closeRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0]))):
                 if ((flag_Partial_close == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
-                    #Example Partial Close
-                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
-                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   market sell 0.08 EURUSD, close #24 (1.10916 / 1.10920)
-                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   deal #28 sell 0.08 EURUSD at 1.10916 done (based on order #28)
-                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   deal performed [#28 sell 0.08 EURUSD at 1.10916]
-                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   order performed sell 0.08 at 1.10916 [#28 sell 0.08 EURUSD at 1.10916]
-                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   |  OrderClose( 24, 0.08, 1.10916, 50 ) - OK!
-                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   market buy 0.26 EURUSD, close #27 (1.10916 / 1.10920)
-                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   deal #29 buy 0.26 EURUSD at 1.10920 done (based on order #29)
-                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   deal performed [#29 buy 0.26 EURUSD at 1.10920]
-                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   order performed buy 0.26 at 1.10920 [#29 buy 0.26 EURUSD at 1.10920]
-                    #2021.07.27 22:03:08.909	2020.01.10 11:21:12   |  OrderClose( 27, 0.26, 1.10920, 50 ) - OK!
-                    # https://docs.mql4.com/trading/orderclose
-                    if (MovingRow[2] == order_modifiedRow[1]) and (order_modifiedRow[1] == OrderModifyRow[1]) and (MovingRow[4] == order_modifiedRow[5]) and (order_modifiedRow[5] == OrderModifyRow[2]):
-                        # print(MovingRow[0] + ";Partial close hedge " + MovingRow[1] + ";" + order_modifiedRow[2] + ";Martingale;Signal;" + order_modifiedRow[4] + ";" + order_modifiedRow[3] + ";" + MovingRow[3] + ";" + MovingRow[4] + ";Slippage;Value1;Value2;" + OrderModifyRow[3] + ";" + OrderModifyRow[4] + ";Expiration;Comment;MagicID;" + OrderModifyRow[5] + ";" + OrderModifyRow[1])
-                        csv_row.append({'Time': MovingRow[0],
-                            'Action': f'Partial close hedge {MovingRow[1]}',
-                            'Type': order_modifiedRow[2],
-                            'Martingale': '',
-                            'Signal': '',
-                            'Symbol': order_modifiedRow[4],
-                            'Volume': order_modifiedRow[3],
-                            'PriceAction': MovingRow[3],
-                            'NewValue': MovingRow[4],
-                            'Slippage': '',
-                            'Value1': '',
-                            'Value2': '',
-                            'StopLoss': OrderModifyRow[3],
-                            'TakeProfit': OrderModifyRow[4],
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
-                            'Status': OrderModifyRow[5],
-                            'Ticket #': OrderModifyRow[1]})
-                        Partial_closeRow = tuple()
-                        OrderCloseRow = tuple()
-                        #flag_Partial_close = 0 (not reset flag)
+                    total_close_order=int(Partial_closeRow[1]) + int(Partial_closeRow[3])
+                    #Example Partial Close hedge
+                    #Partial_closeRow    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
+                    #marketRow2          #2021.07.27 22:03:08.905	2020.01.10 11:21:12   market sell 0.08 EURUSD, close #24 (1.10916 / 1.10920)
+                    #                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   deal #28 sell 0.08 EURUSD at 1.10916 done (based on order #28)
+                    #                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   deal performed [#28 sell 0.08 EURUSD at 1.10916]
+                    #                    #2021.07.27 22:03:08.905	2020.01.10 11:21:12   order performed sell 0.08 at 1.10916 [#28 sell 0.08 EURUSD at 1.10916]
+                    #OrderCloseRow       #2021.07.27 22:03:08.907	2020.01.10 11:21:12   |  OrderClose( 24, 0.08, 1.10916, 50 ) - OK!
+                    #marketRow2          #2021.07.27 22:03:08.907	2020.01.10 11:21:12   market buy 0.26 EURUSD, close #27 (1.10916 / 1.10920)
+                    #                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   deal #29 buy 0.26 EURUSD at 1.10920 done (based on order #29)
+                    #                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   deal performed [#29 buy 0.26 EURUSD at 1.10920]
+                    #                    #2021.07.27 22:03:08.907	2020.01.10 11:21:12   order performed buy 0.26 at 1.10920 [#29 buy 0.26 EURUSD at 1.10920]
+                    #OrderCloseRow       #2021.07.27 22:03:08.909	2020.01.10 11:21:12   |  OrderClose( 27, 0.26, 1.10920, 50 ) - OK!
+
+                    #Partial_closeRow    #2020.02.07 10:59:29   Partial close hedge: closing 1 profit order ($+15.84) + 1 opposite loss order ($-0.04) with total profit $+15.80!
+                    #marketRow2          #2020.02.07 10:59:29   market sell 0.04 EURUSD, close #9 (1.09592 / 1.09597)
+                    #                    #2020.02.07 10:59:29   deal #10 sell 0.04 EURUSD at 1.09592 done (based on order #10)
+                    #                    #2020.02.07 10:59:29   deal performed [#10 sell 0.04 EURUSD at 1.09592]
+                    #                    #2020.02.07 10:59:29   order performed sell 0.04 at 1.09592 [#10 sell 0.04 EURUSD at 1.09592]
+                    #OrderCloseRow       #2020.02.07 10:59:29   |  OrderClose( 9, 0.04, 1.09592, 50 ) - OK!
+                    #marketRow2          #2020.02.07 10:59:29   market buy 0.08 EURUSD, close #6 (1.09592 / 1.09597)
+                    #                    #2020.02.07 10:59:29   deal #11 buy 0.08 EURUSD at 1.09597 done (based on order #11)
+                    #                    #2020.02.07 10:59:29   deal performed [#11 buy 0.08 EURUSD at 1.09597]
+                    #                    #2020.02.07 10:59:29   order performed buy 0.08 at 1.09597 [#11 buy 0.08 EURUSD at 1.09597]
+                    #OrderCloseRow       #2020.02.07 10:59:29   |  OrderClose( 6, 0.08, 1.09597, 50 ) - OK!
+                    if close_order < total_close_order:
+                        close_order = close_order + 1
+                        if (marketRow2[5] == OrderCloseRow[1]):
+                            csv_row.append({'Time': Partial_closeRow[0],
+                                'Action': f'Partial close hedge profit {Partial_closeRow[1]} + loss {Partial_closeRow[3]}',
+                                'Type': marketRow2[1],
+                                'Symbol': marketRow2[3],
+                                'Volume': marketRow2[2],
+                                'PriceAction': OrderCloseRow[3],
+                                'Profit': Partial_closeRow[5],
+                                'Slippage': OrderCloseRow[4],
+                                'Value1': marketRow2[6],
+                                'Value2': marketRow2[7],
+                                'Status': OrderCloseRow[5],
+                                'Ticket #': OrderCloseRow[1]})
+                            flag_market2 = 0
+                            flag_OrderClose = 0
+                            marketRow2 = tuple()
+                            OrderCloseRow = tuple()
+                            continue
+                        else:
+                            print("Error in Script. Check Log!! Critical error-10.1")
+                            continue
+                            # exit()
+                    if close_order >= total_close_order:
+                        close_order = 0
+                        flag_Partial_close = 0
+                        flag_market2 = 0
                         flag_OrderClose = 0
-                        continue
-                    else:
-                        print("Error in Script. Check Log!! Critical error-9.1")
-                        exit()
+                        Partial_closeRow = tuple()
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                    continue
+
 
 
 
             #Partial close any: closing 2 profit orders ($+266.05) + 1 loss order ($-166.00) with total profit $+100.05!
             if ((len(Partial_closeRow2) and len(marketRow2) and len(OrderCloseRow)) and ((Partial_closeRow2[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0]) and (marketRow2[5] == OrderCloseRow[1]))):
                 if ((flag_Partial_close2 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
-                    total_close_order=int(Partial_closeRow2[1]) + int(Partial_closeRow2[3])
+                    total_close_order2=int(Partial_closeRow2[1]) + int(Partial_closeRow2[3])
+                    #Example Partial Close any
                     #Partial_closeRow2      #2022.01.04 18:25:39   Partial close any: closing 2 profit orders ($+266.05) + 1 loss order ($-166.00) with total profit $+100.05!
                     #marketRow2             #2022.01.04 18:25:39   market buy 1.33 EURUSD, close #21 (1.12973 / 1.12990)
                     #                       #2022.01.04 18:25:39    deal #22 buy 1.33 EURUSD at 1.12990 done (based on order #22)
@@ -1026,71 +1047,32 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         csv_row.append({'Time': Partial_closeRow2[0],
                             'Action': f'Partial close any profit {Partial_closeRow2[1]} + loss {Partial_closeRow2[3]}',
                             'Type': marketRow2[1],
-                            'Martingale': '',
-                            'Signal': '',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'NewValue': '',
-                            'Profit': f'Profit: {Partial_closeRow2[5]}',
+                            'Profit': Partial_closeRow2[5],
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
-                            'StopLoss': '',
-                            'TakeProfit': '',
-                            'Expiration': '',
-                            'Comment': '',
-                            'MagicID': '',
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
-                        # Partial_closeRow2 = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
                         #flag_Partial_close = 0 (not reset flag)
-                        #flag_OrderClose = 0
-                        if close_order < total_close_order:
-                            close_order = close_order+1
-                        if close_order >= total_close_order:
-                            close_order = 0
+                        if close_order2 < total_close_order2:
+                            close_order2 = close_order2 + 1
+                        if close_order2 >= total_close_order2:
+                            close_order2 = 0
                             flag_Partial_close2 = 0
                             flag_market2 = 0
                             flag_OrderClose = 0
                             Partial_closeRow2 = tuple()
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-9.1")
+                        print("Error in Script. Check Log!! Critical error-10.2")
                         exit()
 
 
-
-            #FALTA TERMINAR
-                    #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
-                    #market sell 0.13 EURUSD, close #26 (1.18534 / 1.18555)
-                    #deal #30 sell 0.13 EURUSD at 1.18534 done (based on order #30)
-                    #deal performed [#30 sell 0.13 EURUSD at 1.18534]
-                    #order performed sell 0.13 at 1.18534 [#30 sell 0.13 EURUSD at 1.18534]
-                    #|  OrderClose( 26, 0.13, 1.18534, 50 ) - OK!
-                    #market sell 0.11 EURUSD, close #14 (1.18534 / 1.18555)
-                    #deal #31 sell 0.11 EURUSD at 1.18534 done (based on order #31)
-                    #deal performed [#31 sell 0.11 EURUSD at 1.18534]
-                    #order performed sell 0.11 at 1.18534 [#31 sell 0.11 EURUSD at 1.18534]
-                    #|  OrderClose( 14, 0.11, 1.18534, 50 ) - OK!
-                    #market sell 0.09 EURUSD, close #13 (1.18534 / 1.18555)
-                    #deal #32 sell 0.09 EURUSD at 1.18534 done (based on order #32)
-                    #deal performed [#32 sell 0.09 EURUSD at 1.18534]
-                    #order performed sell 0.09 at 1.18534 [#32 sell 0.09 EURUSD at 1.18534]
-                    #|  OrderClose( 13, 0.09, 1.18534, 50 ) - OK!
-                    #market sell 0.08 EURUSD, close #12 (1.18534 / 1.18555)
-                    #deal #33 sell 0.08 EURUSD at 1.18534 done (based on order #33)
-                    #deal performed [#33 sell 0.08 EURUSD at 1.18534]
-                    #order performed sell 0.08 at 1.18534 [#33 sell 0.08 EURUSD at 1.18534]
-                    #|  OrderClose( 12, 0.08, 1.18534, 50 ) - OK!
-                    #market buy 3.93 EURUSD, close #27 (1.18534 / 1.18555)
-                    #deal #34 buy 3.93 EURUSD at 1.18555 done (based on order #34)
-                    #deal performed [#34 buy 3.93 EURUSD at 1.18555]
-                    #order performed buy 3.93 at 1.18555 [#34 buy 3.93 EURUSD at 1.18555]
-                    #|  OrderClose( 27, 3.93, 1.18555, 50 ) - OK!
-                    #
 
 
 
@@ -1134,7 +1116,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # 2019.01.24 16:14:15   TrailingStop for BUY: 1.13446 -> 1.13553
                     # 2019.01.03 10:06:34   TrailingStop for SELL: 0 -> 1.13679
                     # https://www.metatrader4.com/es/trading-platform/help/positions/trailing
-                    # print(TrailingStopRow[0] + ";TrailingStop for " + TrailingStopRow[1].lower() + ";" + TrailingStopRow[1].lower() + ";Martingale;Signal;Symbol;Volume;" + TrailingStopRow[2] + ";" + TrailingStopRow[3])
                     csv_row.append({'Time': TrailingStopRow[0],
                         'Action': 'TrailingStop for ' + TrailingStopRow[1].lower(),
                         'Type': TrailingStopRow[1].lower(),
@@ -1152,48 +1133,108 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # deal #8 buy 1 XAUUSD at 1902.500 done (based on order #8)
                     # deal performed [#8 buy 1 XAUUSD at 1902.500]
                     # order performed buy 1 at 1902.500 [#8 buy 1 XAUUSD at 1881.920]
-                    # print(stop_loss_triggeredRow[0] + ";stop loss triggered " + stop_loss_triggeredRow[2] + ";" + stop_loss_triggeredRow[2] + ";Martingale;Signal;" + stop_loss_triggeredRow[4] + ";" + stop_loss_triggeredRow[3] + ";" + stop_loss_triggeredRow[12] + ";NewValue;Slippage;" + stop_loss_triggeredRow[6] + ";" + stop_loss_triggeredRow[7] + ";StopLoss;TakeProfit;Expiration;Comment;MagicID;Status;" + stop_loss_triggeredRow[1])
                     csv_row.append({'Time': stop_loss_triggeredRow[0],
                         'Action': f'stop loss triggered {stop_loss_triggeredRow[2]}' ,
                         'Type': stop_loss_triggeredRow[2],
-                        'Martingale': '',
-                        'Signal': '',
                         'Symbol': stop_loss_triggeredRow[4],
                         'Volume': stop_loss_triggeredRow[3],
                         'PriceAction': stop_loss_triggeredRow[12],
-                        'NewValue':'',
-                        'Profit': '',
-                        'Profit': '',
-                        'Slippage': '',
                         'Value1': stop_loss_triggeredRow[6],
                         'Value2': stop_loss_triggeredRow[7],
-                        'StopLoss':'',
-                        'TakeProfit':'',
-                        'Expiration':'',
-                        'Comment': '',
-                        'MagicID': '',
-                        'Status': '',
                         'Ticket #': stop_loss_triggeredRow[1]})
                     stop_loss_triggeredRow = tuple()
                     flag_stop_loss_triggered = 0
                     continue
                 else:
-                    print("Error in Script. Check Log!! Critical error-10")
+                    print("Error in Script. Check Log!! Critical error-11")
                     exit()
+
+            if (len(SlippagesRow)):
+                if (flag_Slippages == 1):
+                    csv_row.append({'Time': SlippagesRow[0],
+                        #'Action': f'Slippages {SlippagesRow[5]} ping = {SlippagesRow[8]} ms, latency = {SlippagesRow[9]} ms!',
+                        'Action': 'Slippages',
+                        'Type' : SlippagesRow[3],
+                        'Volume': SlippagesRow[2],
+                        'PriceAction': SlippagesRow[4],
+                        'NewValue': SlippagesRow[5],
+                        'Slippage': SlippagesRow[6],
+                        'Ticket #': SlippagesRow[1]})
+                    SlippagesRow = tuple()
+                    flag_Slippages = 0
+                    # Flags Initialization
+                    flag_Signal = 0
+                    flag_Signal2 = 0
+                    flag_Signal3 = 0
+                    flag_Signal4 = 0
+                    flag_Signal5 = 0
+                    flag_Signal6 = 0
+                    flag_Signal7 = 0
+                    flag_OrderSend = 0
+                    flag_OrderClose = 0
+                    flag_OrderModify = 0
+                    flag_OrderModify2 = 0
+                    flag_TrailingStop = 0
+                    flag_Modifying = 0
+                    flag_Moving = 0
+                    flag_position_modified = 0
+                    flag_position_modified2 = 0
+                    flag_order_modified = 0
+                    flag_stop_loss_triggered = 0
+                    flag_market = 0
+                    flag_market2 = 0
+                    flag_buy_sell_stop = 0
+                    flag_Global_TakeProfit = 0
+                    flag_Partial_close = 0
+                    flag_Partial_close2 = 0
+                    flag_Slippages = 0
+                    # Variables Clean
+                    SignalRow = ()
+                    SignalRow2 = ()
+                    SignalRow3 = ()
+                    SignalRow4 = ()
+                    SignalRow5 = ()
+                    SignalRow6 = ()
+                    SignalRow7 = ()
+                    OrderSendRow = ()
+                    OrderCloseRow = ()
+                    OrderModifyRow = ()
+                    OrderModifyRow2 = ()
+                    TrailingStopRow = ()
+                    ModifyingRow = ()
+                    MovingRow = ()
+                    position_modifiedRow = ()
+                    position_modifiedRow2 = ()
+                    order_modifiedRow = ()
+                    stop_loss_triggeredRow = ()
+                    marketRow = ()
+                    marketRow2 = ()
+                    buy_sell_stopRow = ()
+                    Global_TakeProfitRow = ()
+                    calculate_profitRow = ()
+                    Partial_closeRow = ()
+                    Partial_closeRow2 = ()
+                    SlippagesRow = ()
+
+                else:
+                    print("Error in Script. Check Log!! Critical error-12")
+                    exit()
+
 
             # Moving buy-stop order #10 to the new level (1.15191 -> 1.15179)...
             # order modified [#10 buy stop 1.01 EURUSD at 1.15179]
             # |  OrderModify( 10, 1.15179, 0.00000, 0.00000 ) - OK!
     else:
-        if (flag_Signal) or (flag_Signal2) or (flag_Signal3) or (flag_Signal4) or (flag_Signal5):
+        #if (flag_Signal) or (flag_Signal2) or (flag_Signal3) or (flag_Signal4) or (flag_Signal5):
+        if flag_Magic:
             if (linea.split(" ")[0] == "final") and (linea.split(" ")[1] == "balance"):
                 # final balance 4.99 USD
-                # print(linea.split(" ")[0] + " " + linea.split(" ")[1] + " " + linea.split(" ")[2] + " " + linea.split(" ")[3])
                 csv_row.append({'Time': linea.split(" ")[0] + " " + linea.split(" ")[1] + " " + linea.split(" ")[2] + " " + linea.split(" ")[3]})
+                flag_Magic = 0
             if (linea.split(" ")[0] == "stop") and (linea.split(" ")[1] == "out") and (linea.split(" ")[2] == "occurred"):
                 # stop out occurred on 0% of testing interval
-                # print(linea.split(" ")[0] + " " + linea.split(" ")[1] + " " + linea.split(" ")[2])
                 csv_row.append({'Time': linea.split(" ")[0] + " " + linea.split(" ")[1] + " " + linea.split(" ")[2]})
+                flag_Magic = 0
 
 
 # print("OrderModify() - ERROR # (Market is closed);" + str(count_OrderModify)
@@ -1214,5 +1255,6 @@ except IOError:
 
 read_file = pd.read_csv (csv_file,delimiter=";")
 read_file.to_excel (excel_file, index = None, header=True)
-print("Finish. Now open file:")
+print("Finish. Opening file...")
 print(excel_file)
+os.startfile(excel_file)
