@@ -45,8 +45,8 @@ else:
     LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
 
 now = datetime.now()
-#LogToday = now.strftime('%Y%m%d') + ".log"
-LogToday="20220308_vps.log"
+LogToday = now.strftime('%Y%m%d') + ".log"
+#LogToday="20220308_vps.log"
 LogFile = os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
     print(f"File Not Found : {LogFile}")
@@ -832,7 +832,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         OrderCloseRow = tuple()
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-7.1")
+                        print("Error in Script. Check Log!! Critical error-7")
                         exit()
 
 
@@ -875,7 +875,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderSend = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-7")
+                        print("Error in Script. Check Log!! Critical error-8")
                         exit()
 
 
@@ -941,7 +941,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderClose = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-7")
+                        print("Error in Script. Check Log!! Critical error-9")
                         exit()
 
 
@@ -977,7 +977,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderModify = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-8")
+                        print("Error in Script. Check Log!! Critical error-10")
                         continue
                         # exit()
 
@@ -1009,7 +1009,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderModify = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-9")
+                        print("Error in Script. Check Log!! Critical error-11")
                         exit()
 
             # Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
@@ -1061,7 +1061,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             OrderCloseRow = tuple()
                             continue
                         else:
-                            print("Error in Script. Check Log!! Critical error-10.1")
+                            print("Error in Script. Check Log!! Critical error-12")
                             continue
                             # exit()
                     if close_order >= total_close_order:
@@ -1123,7 +1123,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             Partial_closeRow2 = tuple()
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-10.2")
+                        print("Error in Script. Check Log!! Critical error-13")
                         exit()
 
 
@@ -1200,7 +1200,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_stop_loss_triggered = 0
                     continue
                 else:
-                    print("Error in Script. Check Log!! Critical error-11")
+                    print("Error in Script. Check Log!! Critical error-14")
                     exit()
 
             if (len(SlippagesRow)):
@@ -1270,7 +1270,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     Partial_closeRow2 = ()
                     SlippagesRow = ()
                 else:
-                    print("Error in Script. Check Log!! Critical error-12")
+                    print("Error in Script. Check Log!! Critical error-15")
                     exit()
             # Moving buy-stop order #10 to the new level (1.15191 -> 1.15179)...
             # order modified [#10 buy stop 1.01 EURUSD at 1.15179]
