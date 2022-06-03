@@ -42,7 +42,9 @@ if len(args) == 2 and args[0] == '-mt5_visual_mode_checked':
     else:
         LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
 else:
-    LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
+    # MT5 change this:
+    # LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
+    LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
 
 now = datetime.now()
 LogToday = now.strftime('%Y%m%d') + ".log"
@@ -75,6 +77,7 @@ flag_OrderSend = 0
 flag_OrderClose = 0
 flag_OrderModify = 0
 flag_OrderModify2 = 0
+flag_OrderDelete = 0
 flag_TrailingStop = 0
 flag_Sum_TakeProfit = 0
 flag_Modifying = 0
@@ -82,7 +85,9 @@ flag_Moving = 0
 flag_position_modified = 0
 flag_position_modified2 = 0
 flag_order_modified = 0
+flag_order_canceled = 0
 flag_stop_loss_triggered = 0
+flag_stop_loss_triggered2 = 0
 flag_market = 0
 flag_market2 = 0
 flag_buy_sell_stop = 0
@@ -99,10 +104,12 @@ SignalRow4 = ()
 SignalRow5 = ()
 SignalRow6 = ()
 SignalRow7 = ()
+SignalRow8 = ()
 OrderSendRow = ()
 OrderCloseRow = ()
 OrderModifyRow = ()
 OrderModifyRow2 = ()
+OrderDeleteRow = ()
 TrailingStopRow = ()
 Sum_TakeProfitRow = ()
 ModifyingRow = ()
@@ -110,7 +117,9 @@ MovingRow = ()
 position_modifiedRow = ()
 position_modifiedRow2 = ()
 order_modifiedRow = ()
+order_canceledRow = ()
 stop_loss_triggeredRow = ()
+stop_loss_triggeredRow2 = ()
 marketRow = ()
 marketRow2 = ()
 buy_sell_stopRow = ()
@@ -191,6 +200,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_OrderClose = 0
                     flag_OrderModify = 0
                     flag_OrderModify2 = 0
+                    flag_OrderDelete = 0
                     flag_TrailingStop = 0
                     flag_Sum_TakeProfit = 0
                     flag_Modifying = 0
@@ -198,7 +208,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_position_modified = 0
                     flag_position_modified2 = 0
                     flag_order_modified = 0
+                    flag_order_canceled = 0
                     flag_stop_loss_triggered = 0
+                    flag_stop_loss_triggered2 = 0
                     flag_market = 0
                     flag_market2 = 0
                     flag_buy_sell_stop = 0
@@ -219,6 +231,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     OrderCloseRow = ()
                     OrderModifyRow = ()
                     OrderModifyRow2 = ()
+                    OrderDeleteRow = ()
                     TrailingStopRow = ()
                     Sum_TakeProfitRow = ()
                     ModifyingRow = ()
@@ -226,7 +239,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     position_modifiedRow = ()
                     position_modifiedRow2 = ()
                     order_modifiedRow = ()
+                    order_canceledRow = ()
                     stop_loss_triggeredRow = ()
+                    stop_loss_triggeredRow2 = ()
                     marketRow = ()
                     marketRow2 = ()
                     buy_sell_stopRow = ()
@@ -254,7 +269,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal = 1
                 SignalRow = (linea.split("   ")[0],) + SignalMatch.groups() + ("SignalRow",)
                 # print(SignalRow)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit =0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit =0
 
             # Signal to open buy #2 at 1885.770!
             SignalRegex2 = re.compile(r'Signal to (open|close) (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -264,7 +279,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal2 = 1
                 SignalRow2 = (linea.split("   ")[0],) + SignalMatch2.groups() + ("SignalRow2",)
                 # print(SignalRow2)
-                flag_Signal = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             # Signal to close sell (FIBO )!
             # Signal to close sell (Stochastic K)!
@@ -275,7 +290,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal3 = 1
                 SignalRow3 = (linea.split("   ")[0],) + SignalMatch3.groups() + ("SignalRow3",)
                 # print(SignalRow3)
-                flag_Signal2 = flag_Signal = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             # Signal to open AutoHedge for buy-order #6 at 1.14407!
             SignalRegex4 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -285,7 +300,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal4 = 1
                 SignalRow4 = (linea.split("   ")[0],) + SignalMatch4.groups() + ("SignalRow4",)
                 # print(SignalRow4)
-                flag_Signal2 = flag_Signal3 = flag_Signal = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             # Signal to open anti-martingale buy #2 at 1.22464!
             SignalRegex5 = re.compile(r'Signal to (open|close) anti-martingale (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -295,7 +310,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal5 = 1
                 SignalRow5 = (linea.split("   ")[0],) + SignalMatch5.groups() + ("SignalRow5",)
                 # print(SignalRow5)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
             #Signal to close sell (BreakEven after order #3 reached: Ask = 1.20893, op = 1.20904, MinProfit = 1.0)!
@@ -306,7 +321,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal6 = 1
                 SignalRow6 = (linea.split("   ")[0],) + SignalMatch6.groups() + ("SignalRow6",)
                 # print(SignalRow6)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             #Signal to open AutoHedge for buy-order #1!
             SignalRegex7 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+)!')
@@ -316,9 +331,18 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal7 = 1
                 SignalRow7 = (linea.split("   ")[0],) + SignalMatch7.groups() + ("SignalRow7",)
                 # print(SignalRow7)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal8 = flag_Signal = flag_Sum_TakeProfit = 0
 
             # Signal to delete pending buy-order (indicator)!
+            SignalRegex8 = re.compile(r'Signal to delete pending (buy|sell)\-order \(indicator\)!')
+            SignalMatch8 = SignalRegex8.search(mensaje)
+            if SignalMatch8 is not None:
+                # print(SignalMatch8.groups())
+                flag_Signal8 = 1
+                SignalRow8 = (linea.split("   ")[0],) + SignalMatch8.groups() + ("SignalRow8",)
+                # print(SignalRow8)
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal = flag_Sum_TakeProfit = 0
+
             # order canceled [#15 buy stop 1 EURUSD at 1.14479]
             # |  OrderDelete( 15 ) - OK!
 
@@ -374,6 +398,15 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 order_modifiedRow = (linea.split("   ")[0],) + order_modifiedMatch.groups() + ("order_modifiedRow",)
                 # print(order_modifiedRow)
 
+            # order canceled [#2 buy stop 0.1 EURUSD at 1.13532]
+            order_canceledRegex = re.compile(r'order canceled \[\#([0-9]+) (buy|sell) stop ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) at ([0-9]*[.]?[0-9]*)\]')
+            order_canceledMatch = order_canceledRegex.search(mensaje)
+            if order_canceledMatch is not None:
+                # print(order_canceledMatch.groups())
+                flag_order_canceled = 1
+                order_canceledRow = (linea.split("   ")[0],) + order_canceledMatch.groups() + ("order_canceledRow",)
+                # print(order_canceledRow)
+
             # buy stop 1 EURUSD at 1.14301 (1.14029 / 1.14034)
             # sell stop 1 EURUSD at 1.13248 (1.13415 / 1.13420)
             buy_sell_stopRegex = re.compile(r'(buy|sell) stop ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) at ([0-9]*[.]?[0-9]*) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
@@ -384,8 +417,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 buy_sell_stopRow = (linea.split("   ")[0],) + buy_sell_stopMatch.groups() + ("buy_sell_stopRow",)
                 # print(buy_sell_stopRow)
 
+            # |  OrderSend( EURUSD, buy stop, 0.1, 1.13538, 50, 0.00000, 0.00000, "CP #1", 3040 ) - OK! Ticket #3.
             # |  OrderSend( XAUUSD, buy, 0.10, 1592.750, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - OK! Ticket #2.
-            OrderSendRegex = re.compile(r'\|  OrderSend\( ([a-zA-Z\#\.]+), (buy|sell), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), \"([a-zA-Z0-9\.\#:\- ]+)\", ([0-9]*) \) - ([a-zA-Z\!]+)! Ticket \#([0-9]*).')
+            OrderSendRegex = re.compile(r'\|  OrderSend\( ([a-zA-Z\#\.]+), (buy|sell|buy stop|sell stop), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), \"([a-zA-Z0-9\.\#:\- ]+)\", ([0-9]*) \) - ([a-zA-Z\!]+)! Ticket \#([0-9]*).')
             OrderSendMatch = OrderSendRegex.search(mensaje)
             if OrderSendMatch is not None:
                 # print(OrderSendMatch.groups())
@@ -394,7 +428,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(OrderSendRow)
                 # https://docs.mql4.com/trading/ordersend
 
-            # PENDING TO DO
             # Moving buy-stop order #10 to the new level (1.15191 -> 1.15179)...
             # Moving sell-stop order #3 to the new level (1.13281 -> 1.13286)...
             MovingRegex = re.compile(r'Moving (buy\-stop|sell\-stop) order \#([0-9]+) to the new level \(([0-9]*[.]?[0-9]*) -> ([0-9]*[.]?[0-9]*)\)...')
@@ -406,24 +439,20 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(MovingRow)
 
             # PENDING TO DO
-            # failed modify #681 buy 0.54 EURUSD sl: 0.00000, tp: 1.14993 -> sl: 0.00000, tp: 1.15021 [Market closed]
-
-            # PENDING TO DO
             # |  OrderSend( XAUUSD, buy stop, 0.10, 1501.680, 50, 0.000, 0.000, "CP18.06.2021.21:03 #1", 234 ) - ERROR #10018 (Market is closed)!
 
             # PENDING TO DO
             # Signal to open buy #6 at 1.09278 (BigCandle)!
             #  Not enough money to open 16.40 lots EURUSDm#! 
 
+            # PENDING TO DO
             # Signal to open sell #6 at 1.09220!
             # Alert:  Not enough money to open 0.07 lots EURUSD! 
-            #
+
+            # PENDING TO DO
             #Signal to open sell #1 at 1.16428 (Stochastic K + IdentifyTrend + FIBO )!
             #Alert: Can't calculate lot for SELL (RiskOnSL): OP = 1.16428, SL = 0.00000!
-            #
-            #
-            # PENDING TO DO
-            # |  OrderModify( 681, 1.14788, 0.00000, 1.15021 ) - ERROR #10018 (Market is closed)!
+
 
             # market buy 0.1 XAUUSD (1934.050 / 1935.010)
             marketRegex = re.compile(r'market (buy|sell) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
@@ -433,7 +462,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_market = 1
                 marketRow = (linea.split("   ")[0],) + marketRegexMatch.groups() + ("marketRow",)
                 # print(marketRow)
-
 
             # market buy 0.1 EURUSD, close #10 (1.13411 / 1.13414)
             marketRegex2 = re.compile(r'market (buy|sell) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+), ([a-z]+) \#([0-9]*) \(([0-9]*[.]?[0-9]*) \/ ([0-9]*[.]?[0-9]*)\)')
@@ -455,6 +483,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 OrderCloseRow = (linea.split("   ")[0],) + OrderCloseMatch.groups() + ("OrderCloseRow",)
                 # print(OrderCloseRow)
 
+            # https://docs.mql4.com/trading/ordermodify
             # |  OrderModify( 18, 1856.780, 0.000, 2175.994 ) - OK!
             # |  OrderModify( 86, 1.14135, 1.17551, 0.00000 ) - OK!
             OrderModifyRegex = re.compile(r'\|  OrderModify\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*) \) - ([A-Z]+)!')
@@ -465,16 +494,20 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 OrderModifyRow = (linea.split("   ")[0],) + OrderModifyMatch.groups() + ("OrderModifyRow",)
                 # print(OrderModifyRow)
 
+            # https://docs.mql4.com/trading/orderdelete
+            # |  OrderDelete( 15 ) - OK!
+            OrderDeleteRegex = re.compile(r'\|  OrderDelete\( ([0-9]+) \) - ([A-Z]+)!')
+            OrderDeleteMatch = OrderDeleteRegex.search(mensaje)
+            if OrderDeleteMatch is not None:
+                # print(OrderDeleteMatch.groups())
+                flag_OrderDelete = 1
+                OrderDeleteRow = (linea.split("   ")[0],) + OrderDeleteMatch.groups() + ("OrderDeleteRow",)
+                # print(OrderDeleteRow)
+
+
+            # PENDING TO DO
             # ERROR ONLY. Use only to count
             # |  OrderModify( 743, 1.10723, 0.00000, 1.10993 ) - ERROR #10018 (Market is closed)!
-            # OrderModifyRegex2 = re.compile(r'\|  OrderModify\( ([0-9]+), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*), ([0-9]*[.]?[0-9]*) \) - ([A-Z]+) \#([0-9]+) \(([a-zA-Z ]+)\)!')
-            # OrderModifyMatch2 = OrderModifyRegex2.search(mensaje)
-            # if OrderModifyMatch2 is not None:
-                # print(OrderModifyMatch2.groups())
-                #flag_OrderModify2 = 1
-                #OrderModifyRow2 = (linea.split("   ")[0],) + OrderModifyMatch2.groups() + ("OrderModifyRow2",)
-                # print(OrderModifyRow2)
-                # count_OrderModify=count_OrderModify+1
 
             # stop loss triggered #7 sell 1 XAUUSD 1889.540 sl: 1881.920 tp: 1732.326 [#8 buy 1 XAUUSD at 1881.920]
             stop_loss_triggeredRegex = re.compile(r'stop loss triggered \#([0-9]*) (buy|sell) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) ([0-9]*[.]?[0-9]*) sl: ([0-9]*[.]?[0-9]*) tp: ([0-9]*[.]?[0-9]*) \[\#([0-9]*) ([a-z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) at ([0-9]*[.]?[0-9]*)\]')
@@ -484,6 +517,15 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_stop_loss_triggered = 1
                 stop_loss_triggeredRow = (linea.split("   ")[0],) + stop_loss_triggeredRegexMatch.groups() + ("stop_loss_triggeredRow",)
                 # print(stop_loss_triggeredRow)
+
+            # stop loss triggered #3 sell 0.1 EURUSD 1.13731 sl: 1.13475 [#4 buy 0.1 EURUSD at 1.13475]
+            stop_loss_triggeredRegex2 = re.compile(r'stop loss triggered \#([0-9]*) (buy|sell) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) ([0-9]*[.]?[0-9]*) sl: ([0-9]*[.]?[0-9]*) \[\#([0-9]*) ([a-z]+) ([0-9]*[.]?[0-9]*) ([a-zA-Z\#\.]+) at ([0-9]*[.]?[0-9]*)\]')
+            stop_loss_triggeredRegexMatch2 = stop_loss_triggeredRegex2.search(mensaje)
+            if stop_loss_triggeredRegexMatch2 is not None:
+                # print(stop_loss_triggeredRegexMatch2.groups())
+                flag_stop_loss_triggered2 = 1
+                stop_loss_triggeredRow2 = (linea.split("   ")[0],) + stop_loss_triggeredRegexMatch2.groups() + ("stop_loss_triggeredRow2",)
+                # print(stop_loss_triggeredRow2)
 
 
             #FALTA COMPROBAR SI ANDA. PENDING TO DO
@@ -518,7 +560,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 Partial_closeRow = (linea.split("   ")[0],) + Partial_closeRegexMatch.groups() + ("Partial_closeRow",)
                 # print(Partial_closeRow)
                 # Reset all signal
-                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
 
             #Partial close any: closing 2 profit orders ($+266.05) + 1 loss order ($-166.00) with total profit $+100.05!
@@ -530,7 +572,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 Partial_closeRow2 = (linea.split("   ")[0],) + Partial_closeRegexMatch2.groups() + ("Partial_closeRow2",)
                 # print(Partial_closeRow2)
                 # Reset all signal
-                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
 
             #Partial close for SELL-series: closing 3 profit orders ($+110.17) + 1 loss order ($-104.10) with total profit $+6.07!
@@ -542,13 +584,13 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 Partial_closeRow3 = (linea.split("   ")[0],) + Partial_closeRegexMatch3.groups() + ("Partial_closeRow3",)
                 # print(Partial_closeRow3)
                 # Reset all signal
-                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Sum_TakeProfit = 0
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
 
             #Slippages: order #8 (0.02 lots): Market Enter at 1.09587 executed at 1.09587, slippage = -0.0 p, spread = 0.50 p, last ping = 0.0 ms, latency = 1.8 ms!
             #Slippages: order #9 (0.04 lots): Market Exit at 1.09592 executed at 1.09592, slippage = -0.0 p, spread = 0.50 p, last ping = 0.0 ms, latency = 1.9 ms!
             #Slippages: order #3 (0.09 lots): Market Enter at 1.11752 executed at 1.11752, slippage = 0.0 p, spread = 0.30 p, last ping = 0.0 ms, latency = 1.8 ms!
-            SlippagesRegex = re.compile(r'Slippages: order \#([0-9]*) \(([0-9]*[.]?[0-9]*) lots\): Market (Enter|Exit) at ([0-9]*[.]?[0-9]*) executed at ([0-9]*[.]?[0-9]*), slippage = -([0-9]*[.]?[0-9]*) p, spread = ([0-9]*[.]?[0-9]*) p, last ping = ([0-9]*[.]?[0-9]*) ms, latency = ([0-9]*[.]?[0-9]*) ms!')
+            SlippagesRegex = re.compile(r'Slippages: order \#([0-9]*) \(([0-9]*[.]?[0-9]*) lots\): Market (Enter|Exit) at ([0-9]*[.]?[0-9]*) executed at ([0-9]*[.]?[0-9]*), slippage = ([\+\-0-9]*[.]?[0-9]*) p, spread = ([0-9]*[.]?[0-9]*) p, last ping = ([0-9]*[.]?[0-9]*) ms, latency = ([0-9]*[.]?[0-9]*) ms!')
             SlippagesRegexMatch = SlippagesRegex.search(mensaje)
             if SlippagesRegexMatch is not None:
                 # print(SlippagesRegexMatch.groups())
@@ -564,6 +606,8 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(Sum_TakeProfitRegexMatch.groups())
                 flag_Sum_TakeProfit = 1
                 Sum_TakeProfitRow = (linea.split("   ")[0],) + Sum_TakeProfitRegexMatch.groups() + ("Sum_TakeProfitRow",)
+                # Reset all signal
+                flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = 0
                 # print(Sum_TakeProfitRow)
 
 
@@ -574,12 +618,17 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
             # Signal to open buy #1 at 1.14301 (Stochastic K + IdentifyTrend + TDI)!
             if ((len(SignalRow) and len(buy_sell_stopRow) and len(OrderSendRow)) and (SignalRow[0] == buy_sell_stopRow[0]) and (buy_sell_stopRow[0] == OrderSendRow[0])):
                 if ((flag_Signal == 1) and (flag_buy_sell_stop == 1) and (flag_OrderSend == 1)):
-                    # Signal to open buy #1 at 1.14301 (Stochastic K + IdentifyTrend + TDI)!
-                    # buy stop 1 EURUSD at 1.14301 (1.14029 / 1.14034)
-                    # |  OrderSend( EURUSD, buy stop, 1.00, 1.14301, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
-                    # Signal to open sell #1 at 1.14156 (Stochastic K + IdentifyTrend + TDI)!
-                    # sell stop 1.02 EURUSD at 1.14156 (1.14297 / 1.14301)
-                    # |  OrderSend( EURUSD, sell stop, 1.02, 1.14156, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #50.
+                    #SignalRow          # Signal to open buy #1 at 1.14301 (Stochastic K + IdentifyTrend + TDI)!
+                    #buy_sell_stopRow   # buy stop 1 EURUSD at 1.14301 (1.14029 / 1.14034)
+                    #OrderSendRow       # |  OrderSend( EURUSD, buy stop, 1.00, 1.14301, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #2.
+
+                    #SignalRow          # Signal to open sell #1 at 1.14156 (Stochastic K + IdentifyTrend + TDI)!
+                    #buy_sell_stopRow   # sell stop 1.02 EURUSD at 1.14156 (1.14297 / 1.14301)
+                    #OrderSendRow       # |  OrderSend( EURUSD, sell stop, 1.02, 1.14156, 50, 0.00000, 0.00000, "CP #1", 3047 ) - OK! Ticket #50.
+
+                    #SignalRow          #Signal to open buy #1 at 1.13538 (Stochastic K + IdentifyTrend + TDI)!
+                    #buy_sell_stopRow   #buy stop 0.1 EURUSD at 1.13538 (1.13399 / 1.13414)
+                    #OrderSendRow       #|  OrderSend( EURUSD, buy stop, 0.1, 1.13538, 50, 0.00000, 0.00000, "CP #1", 3040 ) - OK! Ticket #3.
                     if (SignalRow[4] == buy_sell_stopRow[4]) and (buy_sell_stopRow[4] == OrderSendRow[4]) and (SignalRow[3] == OrderSendRow[8].split("#")[1]):
                         csv_row.append({'Time': SignalRow[0],
                             'Action': f'Signal1 to {SignalRow[1]}',
@@ -660,7 +709,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #               #2021.07.27 20:09:48.870	2020.01.07 13:52:31   deal performed [#111 buy 0.08 EURUSD at 1.11817]
                     #               #2021.07.27 20:09:48.870	2020.01.07 13:52:31   order performed buy 0.08 at 1.11817 [#111 buy 0.08 EURUSD at 1.11817]
                     #OrderSendRow   #2021.07.27 20:09:48.872	2020.01.07 13:52:31   |  OrderSend( EURUSD, buy, 0.08, 1.11817, 50, 0.00000, 0.00000, "CP19.07.2021.00:25 #2", 235 ) - OK! Ticket #111.
-
                     if (SignalRow2[1] == "open") and (marketRow[1] == OrderSendRow[2]) and (marketRow[3] == OrderSendRow[1]):
                         csv_row.append({'Time': SignalRow2[0],
                             'Action': 'Signal3 to ' + SignalRow2[1],
@@ -910,6 +958,32 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in Script. Check Log!! Critical error-8")
                         exit()
 
+            #Signal to delete pending buy-order (indicator)!
+            if ((len(SignalRow8) and len(order_canceledRow) and len(OrderDeleteRow)) and (SignalRow8[0] == order_canceledRow[0]) and (order_canceledRow[0] == OrderDeleteRow[0])):
+                if ((flag_Signal8 == 1) and (flag_order_canceled == 1) and (flag_OrderDelete == 1)):
+                #SignalRow8         #Signal to delete pending buy-order (indicator)!
+                #order_canceledRow  #order canceled [#2 buy stop 0.1 EURUSD at 1.13532]
+                #OrderDeleteRow     #|  OrderDelete( 2 ) - OK!
+                    if (SignalRow8[1] == order_canceledRow[2]) and (order_canceledRow[1] == OrderDeleteRow[1]):
+                        csv_row.append({'Time': SignalRow8[0],
+                            'Action': f'Signal9 to delete pending',
+                            'Type': SignalRow8[1],
+                            'Signal': 'delete',
+                            'Symbol': order_canceledRow[4],
+                            'Volume': order_canceledRow[3],
+                            'PriceAction': order_canceledRow[5],
+                            'Status': OrderDeleteRow[2],
+                            'Ticket #': OrderDeleteRow[1]})
+                        SignalRow8 = tuple()
+                        order_canceledRow = tuple()
+                        OrderDeleteRow = tuple()
+                        flag_Signal8 = 0
+                        flag_order_canceled = 0
+                        flag_OrderDelete = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-8.1")
+                        exit()
 
             #Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
             if ((len(Global_TakeProfitRow) and len(marketRow2) and len(OrderCloseRow)) and (Global_TakeProfitRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
@@ -920,7 +994,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #                           # deal performed [#8 buy 0.13 EURUSD at 1.22340]
                     #                           # order performed buy 0.13 at 1.22340 [#8 buy 0.13 EURUSD at 1.22340]
                     #OrderCloseRow              # |  OrderClose( 5, 0.13, 1.22340, 50 ) - OK!
-                    # buy
+                    # <----->buy<----->
                     if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
                         csv_row.append({'Time': Global_TakeProfitRow[0],
                             'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> ${Global_TakeProfitRow[3]}',
@@ -949,7 +1023,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # deal performed [#7 sell 0.17 EURUSD at 1.22325]
                     # order performed sell 0.17 at 1.22325 [#7 sell 0.17 EURUSD at 1.22325]
                     # |  OrderClose( 6, 0.17, 1.22325, 50 ) - OK!
-                    # sell
+                    # <----->sell<----->
                     elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
                         csv_row.append({'Time': Global_TakeProfitRow[0],
                             'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> $ {Global_TakeProfitRow[3]}',
@@ -1233,7 +1307,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                                         #deal performed [#31 sell 0.1 XAUUSD at 1921.370]
                                         #order performed sell 0.1 at 1921.370 [#31 sell 0.1 XAUUSD at 1921.370]
                     #OrderCloseRow      #|  OrderClose( 26, 0.1, 1921.370, 50 ) - OK!
-                                        #
                     if (marketRow2[5] == OrderCloseRow[1]):
                         csv_row.append({'Time': Sum_TakeProfitRow[0],
                             'Action': f'Sum TakeProfit {Sum_TakeProfitRow[1]} has been reached {Sum_TakeProfitRow[2]} >= {Sum_TakeProfitRow[3]}',
@@ -1305,7 +1378,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     continue
 
             # https://www.metatrader4.com/en/trading-platform/help/positions/orders
-            # MMMM Esto hay que chequearlo bien en el tester porque no estoy seguro que este bien
+            # CHECK THIS IF WORKING
             if (len(stop_loss_triggeredRow)):
                 if (flag_stop_loss_triggered == 1):
                     # stop loss triggered #7 sell 1 XAUUSD 1889.540 sl: 1881.920 tp: 1732.326 [#8 buy 1 XAUUSD at 1881.920]
@@ -1313,7 +1386,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     # deal performed [#8 buy 1 XAUUSD at 1902.500]
                     # order performed buy 1 at 1902.500 [#8 buy 1 XAUUSD at 1881.920]
                     csv_row.append({'Time': stop_loss_triggeredRow[0],
-                        'Action': f'stop loss triggered {stop_loss_triggeredRow[2]}' ,
+                        'Action': f'stop loss triggered' ,
                         'Type': stop_loss_triggeredRow[2],
                         'Symbol': stop_loss_triggeredRow[4],
                         'Volume': stop_loss_triggeredRow[3],
@@ -1328,10 +1401,34 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     print("Error in Script. Check Log!! Critical error-16")
                     exit()
 
+
+            # stop loss triggered #3 sell 0.1 EURUSD 1.13731 sl: 1.13475 [#4 buy 0.1 EURUSD at 1.13475]
+            if ((len(stop_loss_triggeredRow2)) and ((stop_loss_triggeredRow2[3] == stop_loss_triggeredRow2[9]) and (stop_loss_triggeredRow2[4] == stop_loss_triggeredRow2[10]) and (stop_loss_triggeredRow2[6] == stop_loss_triggeredRow2[11]))):
+                if (flag_stop_loss_triggered2 == 1):
+                    #stop_loss_triggeredRow2    #stop_loss_triggeredRow2    #stop loss triggered #3 sell 0.1 EURUSD 1.13731 sl: 1.13475 [#4 buy 0.1 EURUSD at 1.13475]
+                    #                           #deal #4 buy 0.1 EURUSD at 1.13475 done (based on order #4)
+                    #                           #deal performed [#4 buy 0.1 EURUSD at 1.13475]
+                    #                           #order performed buy 0.1 at 1.13475 [#4 buy 0.1 EURUSD at 1.13475]
+                    csv_row.append({'Time': stop_loss_triggeredRow2[0],
+                        'Action': f'stop loss triggered' ,
+                        'Type': stop_loss_triggeredRow2[2],
+                        'Symbol': stop_loss_triggeredRow2[4],
+                        'Volume': stop_loss_triggeredRow2[3],
+                        'PriceAction': stop_loss_triggeredRow2[11],
+                        'Value1': stop_loss_triggeredRow2[5],
+                        'Value2': stop_loss_triggeredRow2[6],
+                        'Ticket #': stop_loss_triggeredRow2[1]})
+                    stop_loss_triggeredRow2 = tuple()
+                    flag_stop_loss_triggered2 = 0
+                    continue
+                else:
+                    print("Error in Script. Check Log!! Critical error-17")
+                    exit()
+
+
             if (len(SlippagesRow)):
                 if (flag_Slippages == 1):
                     csv_row.append({'Time': SlippagesRow[0],
-                        #'Action': f'Slippages {SlippagesRow[5]} ping = {SlippagesRow[8]} ms, latency = {SlippagesRow[9]} ms!',
                         'Action': 'Slippages',
                         'Type' : SlippagesRow[3],
                         'Volume': SlippagesRow[2],
@@ -1353,6 +1450,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_OrderClose = 0
                     flag_OrderModify = 0
                     flag_OrderModify2 = 0
+                    flag_OrderDelete = 0
                     flag_TrailingStop = 0
                     flag_Modifying = 0
                     flag_Moving = 0
@@ -1375,6 +1473,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     SignalRow5 = ()
                     SignalRow6 = ()
                     SignalRow7 = ()
+                    SignalRow8 = ()
                     OrderSendRow = ()
                     OrderCloseRow = ()
                     OrderModifyRow = ()
@@ -1385,7 +1484,9 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     position_modifiedRow = ()
                     position_modifiedRow2 = ()
                     order_modifiedRow = ()
+                    order_canceledRow = ()
                     stop_loss_triggeredRow = ()
+                    stop_loss_triggeredRow2 = ()
                     marketRow = ()
                     marketRow2 = ()
                     buy_sell_stopRow = ()
