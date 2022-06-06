@@ -1302,19 +1302,19 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 if ((flag_Sum_TakeProfit == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
                     #Sum_TakeProfitRow  #Sum TakeProfit ($1.00) has been reached ($1.52 >= $1.00)!
                     #marketRow2         #market sell 0.3 XAUUSD, close #28 (1921.370 / 1921.780)
-                                        #deal #29 sell 0.3 XAUUSD at 1921.370 done (based on order #29)
-                                        #deal performed [#29 sell 0.3 XAUUSD at 1921.370]
-                                        #order performed sell 0.3 at 1921.370 [#29 sell 0.3 XAUUSD at 1921.370]
+                    #                   #deal #29 sell 0.3 XAUUSD at 1921.370 done (based on order #29)
+                    #                   #deal performed [#29 sell 0.3 XAUUSD at 1921.370]
+                    #                   #order performed sell 0.3 at 1921.370 [#29 sell 0.3 XAUUSD at 1921.370]
                     #OrderCloseRow      #|  OrderClose( 28, 0.3, 1921.370, 50 ) - OK!
                     #marketRow2         #market sell 0.17 XAUUSD, close #27 (1921.370 / 1921.780)
-                                        #deal #30 sell 0.17 XAUUSD at 1921.370 done (based on order #30)
-                                        #deal performed [#30 sell 0.17 XAUUSD at 1921.370]
-                                        #order performed sell 0.17 at 1921.370 [#30 sell 0.17 XAUUSD at 1921.370]
+                    #                   #deal #30 sell 0.17 XAUUSD at 1921.370 done (based on order #30)
+                    #                   #deal performed [#30 sell 0.17 XAUUSD at 1921.370]
+                    #                   #order performed sell 0.17 at 1921.370 [#30 sell 0.17 XAUUSD at 1921.370]
                     #OrderCloseRow      #|  OrderClose( 27, 0.17, 1921.370, 50 ) - OK!
                     #marketRow2         #market sell 0.1 XAUUSD, close #26 (1921.370 / 1921.780)
-                                        #deal #31 sell 0.1 XAUUSD at 1921.370 done (based on order #31)
-                                        #deal performed [#31 sell 0.1 XAUUSD at 1921.370]
-                                        #order performed sell 0.1 at 1921.370 [#31 sell 0.1 XAUUSD at 1921.370]
+                    #                   #deal #31 sell 0.1 XAUUSD at 1921.370 done (based on order #31)
+                    #                   #deal performed [#31 sell 0.1 XAUUSD at 1921.370]
+                    #                   #order performed sell 0.1 at 1921.370 [#31 sell 0.1 XAUUSD at 1921.370]
                     #OrderCloseRow      #|  OrderClose( 26, 0.1, 1921.370, 50 ) - OK!
                     if (marketRow2[5] == OrderCloseRow[1]):
                         csv_row.append({'Time': Sum_TakeProfitRow[0],
@@ -1392,11 +1392,23 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 if (flag_TesterWithdrawal == 1):
                     #TesterWithdrawal: previous balance = $14 959.35, current profit = $+6 669.68, withdrawal amount = $3 334.84! Next withdrawal is scheduled for 2022.07.01
                     #deal #838 balance -3334.84 [withdrawal] done
+                    profit=TesterWithdrawalRow[2]
+                    profit=profit.replace("+", "")
+                    profit=profit.replace(" ", "")
+                    
+                    value1=TesterWithdrawalRow[1]
+                    value1=value1.replace("+", "")
+                    value1=value1.replace(" ", "")
+                    
+                    value2=TesterWithdrawalRow[3]
+                    value2=value2.replace("+", "")
+                    value2=value2.replace(" ", "")
+                    
                     csv_row.append({'Time': TesterWithdrawalRow[0],
                         'Action': 'TesterWithdrawal',
-                        'Profit': TesterWithdrawalRow[2],
-                        'Value1': TesterWithdrawalRow[1],
-                        'Value2': TesterWithdrawalRow[3]})
+                        'Profit': profit,
+                        'Value1': value1,
+                        'Value2': value2})
                     TesterWithdrawalRow = tuple()
                     flag_TesterWithdrawal = 0
                     continue
