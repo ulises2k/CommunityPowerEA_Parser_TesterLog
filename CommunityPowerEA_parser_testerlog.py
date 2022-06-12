@@ -37,15 +37,15 @@ if len(args) == 2 and args[0] == '-mt5_visual_mode_checked':
     if args[1] == 'off':
         LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
     if args[1] == 'on':
-        LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
+        LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
     else:
         LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
 else:
-    LogDirectory=expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Tester\\" + DATA_FOLDER + "\\Agent-127.0.0.1-3000\\Logs"
+    LogDirectory = expanduser("~") + "\\AppData\\Roaming\\MetaQuotes\\Terminal\\" + DATA_FOLDER + "\\Tester\\Logs"
 
 now = datetime.now()
 LogToday = now.strftime('%Y%m%d') + ".log"
-#LogToday="20220531.log"
+#LogToday="20220611.log"
 LogFile = os.path.join(LogDirectory, LogToday)
 if not (os.path.isfile(LogFile)):
     print(f"File Not Found : {LogFile}")
@@ -56,7 +56,7 @@ print(LogFile)
 
 
 # HEADER CSV
-csv_columns = ['Time','Action','Type','Martingale','Signal','Symbol','Volume','PriceAction','NewValue','Profit','Slippage','Value1','Value2','StopLoss','TakeProfit','Expiration','Comment','MagicID','Status','Ticket #']
+csv_columns = ['Time','Action','Type','Martingale','Signal','Symbol','Volume','PriceAction','NewValue','Profit','StartEquity','CurrentEquity','Slippage','Value1','Value2','StopLoss','TakeProfit','Expiration','Comment','MagicID','Status','Ticket #']
 csv_row = [{}]
 file_uniqe = datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M%S')
 csv_file = file_uniqe + ".csv"
@@ -89,12 +89,20 @@ flag_stop_loss_triggered2 = 0
 flag_market = 0
 flag_market2 = 0
 flag_buy_sell_stop = 0
-flag_Global_TakeProfit = 0
+flag_GA_TakeProfit = 0
+flag_GA_TakeProfit2 = 0
+flag_GA_TargetProfit = 0
+flag_GA_TargetProfit2 = 0
+flag_GA_TrailingStopActivated = 0
+flag_GA_TrailingStopActivated2 = 0
+flag_GA_TrailingStop = 0
+flag_GA_TrailingStop2 = 0
 flag_Partial_close = 0
 flag_Partial_close2 = 0
 flag_Partial_close3 = 0
 flag_Slippages = 0
 flag_TesterWithdrawal = 0
+flag_orders_reached_BreakEven = 0
 # Variables Clean
 SignalRow = ()
 SignalRow2 = ()
@@ -112,6 +120,7 @@ OrderDeleteRow = ()
 TrailingStopRow = ()
 Sum_TakeProfitRow = ()
 TesterWithdrawalRow = ()
+orders_reached_BreakEvenRow = ()
 ModifyingRow = ()
 MovingRow = ()
 position_modifiedRow = ()
@@ -123,7 +132,14 @@ stop_loss_triggeredRow2 = ()
 marketRow = ()
 marketRow2 = ()
 buy_sell_stopRow = ()
-Global_TakeProfitRow = ()
+GA_TakeProfitRow = ()
+GA_TakeProfitRow2 = ()
+GA_TargetProfitRow = ()
+GA_TargetProfitRow2 = ()
+GA_TrailingStopActivatedRow = ()
+GA_TrailingStopRow = ()
+GA_TrailingStopRow2 = ()
+GA_TrailingStopActivatedRow2 = ()
 calculate_profitRow = ()
 Partial_closeRow = ()
 Partial_closeRow2 = ()
@@ -216,12 +232,20 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_market = 0
                     flag_market2 = 0
                     flag_buy_sell_stop = 0
-                    flag_Global_TakeProfit = 0
+                    flag_GA_TakeProfit = 0
+                    flag_GA_TakeProfit2 = 0
+                    flag_GA_TargetProfit = 0
+                    flag_GA_TargetProfit2 = 0
+                    flag_GA_TrailingStopActivated = 0
+                    flag_GA_TrailingStopActivated2 = 0
+                    flag_GA_TrailingStop = 0
+                    flag_GA_TrailingStop2 = 0
                     flag_Partial_close = 0
                     flag_Partial_close2 = 0
                     flag_Partial_close3 = 0
                     flag_Slippages = 0
                     flag_TesterWithdrawal = 0
+                    flag_orders_reached_BreakEven = 0
                     # Variables Clean
                     SignalRow = ()
                     SignalRow2 = ()
@@ -239,6 +263,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     TrailingStopRow = ()
                     Sum_TakeProfitRow = ()
                     TesterWithdrawalRow = ()
+                    orders_reached_BreakEvenRow = ()
                     ModifyingRow = ()
                     MovingRow = ()
                     position_modifiedRow = ()
@@ -250,7 +275,14 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     marketRow = ()
                     marketRow2 = ()
                     buy_sell_stopRow = ()
-                    Global_TakeProfitRow = ()
+                    GA_TakeProfitRow = ()
+                    GA_TakeProfitRow2 = ()
+                    GA_TargetProfitRow = ()
+                    GA_TargetProfitRow2 = ()
+                    GA_TrailingStopActivatedRow = ()
+                    GA_TrailingStopRow = ()
+                    GA_TrailingStopRow2 = ()
+                    GA_TrailingStopActivatedRow2 = ()
                     calculate_profitRow = ()
                     Partial_closeRow = ()
                     Partial_closeRow2 = ()
@@ -275,7 +307,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal = 1
                 SignalRow = (linea.split("   ")[0],) + SignalMatch.groups() + ("SignalRow",)
                 # print(SignalRow)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit =0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             # Signal to open buy #2 at 1885.770!
             SignalRegex2 = re.compile(r'Signal to (open|close) (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -285,7 +317,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal2 = 1
                 SignalRow2 = (linea.split("   ")[0],) + SignalMatch2.groups() + ("SignalRow2",)
                 # print(SignalRow2)
-                flag_Signal = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
+                flag_Signal = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             # Signal to close sell (FIBO )!
             # Signal to close sell (Stochastic K)!
@@ -296,7 +328,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal3 = 1
                 SignalRow3 = (linea.split("   ")[0],) + SignalMatch3.groups() + ("SignalRow3",)
                 # print(SignalRow3)
-                flag_Signal2 = flag_Signal = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             # Signal to open AutoHedge for buy-order #6 at 1.14407!
             SignalRegex4 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -306,7 +338,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal4 = 1
                 SignalRow4 = (linea.split("   ")[0],) + SignalMatch4.groups() + ("SignalRow4",)
                 # print(SignalRow4)
-                flag_Signal2 = flag_Signal3 = flag_Signal = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             # Signal to open anti-martingale buy #2 at 1.22464!
             SignalRegex5 = re.compile(r'Signal to (open|close) anti-martingale (buy|sell) \#([0-9]+) at ([0-9]*[.]?[0-9]*)!')
@@ -316,7 +348,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal5 = 1
                 SignalRow5 = (linea.split("   ")[0],) + SignalMatch5.groups() + ("SignalRow5",)
                 # print(SignalRow5)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             #Signal to close buy (BreakEven after order #4 reached: Bid = 1.18534, op = 1.18524, MinProfit = 1.0)!
             #Signal to close sell (BreakEven after order #3 reached: Ask = 1.20893, op = 1.20904, MinProfit = 1.0)!
@@ -327,7 +359,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal6 = 1
                 SignalRow6 = (linea.split("   ")[0],) + SignalMatch6.groups() + ("SignalRow6",)
                 # print(SignalRow6)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             #Signal to open AutoHedge for buy-order #1!
             SignalRegex7 = re.compile(r'Signal to (open|close) AutoHedge for (buy\-order|sell\-order) \#([0-9]+)!')
@@ -337,7 +369,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal7 = 1
                 SignalRow7 = (linea.split("   ")[0],) + SignalMatch7.groups() + ("SignalRow7",)
                 # print(SignalRow7)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal8 = flag_Signal = flag_Sum_TakeProfit = 0
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal8 = flag_Signal = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
 
             # Signal to delete pending buy-order (indicator)!
             SignalRegex8 = re.compile(r'Signal to delete pending (buy|sell)\-order \(indicator\)!')
@@ -347,15 +379,10 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal8 = 1
                 SignalRow8 = (linea.split("   ")[0],) + SignalMatch8.groups() + ("SignalRow8",)
                 # print(SignalRow8)
-                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal = flag_Sum_TakeProfit = 0
-
-            # order canceled [#15 buy stop 1 EURUSD at 1.14479]
-            # |  OrderDelete( 15 ) - OK!
-
+                flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal = flag_Sum_TakeProfit = flag_GA_TakeProfit = flag_GA_TakeProfit2 = flag_GA_TargetProfit = flag_GA_TargetProfit2 = flag_GA_TrailingStop = 0
             # --------------------------------------------------------------------------------------------
             # SIGNAL END
             # --------------------------------------------------------------------------------------------
-
 
             # TrailingStop for BUY: 0 -> 1920.37
             TrailingStopRegex = re.compile(r'TrailingStop for (BUY|SELL): ([0-9]*[.]?[0-9]*) -> ([0-9]*[.]?[0-9]*)')
@@ -511,7 +538,6 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
 
 
             # PENDING TO DO
-            # ERROR ONLY. Use only to count
             # |  OrderModify( 743, 1.10723, 0.00000, 1.10993 ) - ERROR #10018 (Market is closed)!
 
 
@@ -533,29 +559,93 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 stop_loss_triggeredRow2 = (linea.split("   ")[0],) + stop_loss_triggeredRegexMatch2.groups() + ("stop_loss_triggeredRow2",)
                 # print(stop_loss_triggeredRow2)
 
-            #FALTA COMPROBAR SI ANDA. PENDING TO DO
-            # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)
-            Global_TakeProfitRegex = re.compile(r'Global TakeProfit \(([0-9]*[.]?[0-9]*)\%\) has been reached \(\$([0-9]*[.]?[0-9]*) >= \$([0-9]*[.]?[0-9]*)\)')
-            Global_TakeProfitRegexMatch = Global_TakeProfitRegex.search(mensaje)
-            if Global_TakeProfitRegexMatch is not None:
-                # print(Global_TakeProfitRegexMatch.groups())
-                flag_Global_TakeProfit = 1
-                Global_TakeProfitRow = (linea.split("   ")[0],) + Global_TakeProfitRegexMatch.groups() + ("Global_TakeProfitRow",)
-                # print(Global_TakeProfitRow)
-
-            #FALTA COMPROBAR SI ANDA. PENDING TO DO
+            # --------------------------------------------------------------------------------------------
+            # Global Account BEGIN
+            # --------------------------------------------------------------------------------------------
             #Global Account TakeProfit has been reached ($10.93 >= $10.00)!
-            Global_AccountRegex = re.compile(r'Global Account TakeProfit has been reached \(\$([0-9]*[.]?[0-9]*) >= \$([0-9]*[.]?[0-9]*)\)!')
-            Global_AccountRegexMatch = Global_AccountRegex.search(mensaje)
-            if Global_AccountRegexMatch is not None:
-                # print(Global_AccountRegexMatch.groups())
-                flag_Global_Account = 1
-                Global_AccountRow = (linea.split("   ")[0],) + Global_AccountRegexMatch.groups() + ("Global_AccountRow",)
-                # print(Global_AccountRow)
+            GA_TakeProfitRegex = re.compile(r'Global Account TakeProfit has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) >= \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TakeProfitRegexMatch = GA_TakeProfitRegex.search(mensaje)
+            if GA_TakeProfitRegexMatch is not None:
+                # print(GA_TakeProfitRegexMatch.groups())
+                flag_GA_TakeProfit = 1
+                GA_TakeProfitRow = (linea.split("   ")[0],) + GA_TakeProfitRegexMatch.groups() + ("GA_TakeProfitRow",)
+                # print(GA_TakeProfitRow)
 
-            # ClosePartialHedge_20210727.log
+            #CP < 2.47 Version(Maybe)(CHECK IT)
+            # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)
+            GA_TakeProfitRegex2 = re.compile(r'Global TakeProfit \(([0-9]*[.]?[0-9]*)\%\) has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) >= \$([\+\-\ 0-9]*[.]?[0-9]*)\)')
+
+            #CP = 2.47 Version
+            #Global Account TakeProfit (1.00%) has been reached ($518.16 >= $503.97)!
+            GA_TakeProfitRegex2 = re.compile(r'Global Account TakeProfit \(([0-9]*[.]?[0-9]*)\%\) has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) >= \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TakeProfitRegexMatch2 = GA_TakeProfitRegex2.search(mensaje)
+            if GA_TakeProfitRegexMatch2 is not None:
+                # print(GA_TakeProfitRegexMatch2.groups())
+                flag_GA_TakeProfit2 = 1
+                GA_TakeProfitRow2 = (linea.split("   ")[0],) + GA_TakeProfitRegexMatch2.groups() + ("GA_TakeProfit2",)
+                # print(GA_TakeProfitRow2)
+
+            #Global Account TargetProfit ($1.00) has been reached ($50 592.19 -> $50 594.69)!
+            GA_TargetProfitRegex = re.compile(r'Global Account TargetProfit \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) -> \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TargetProfitRegexMatch = GA_TargetProfitRegex.search(mensaje)
+            if GA_TargetProfitRegexMatch is not None:
+                # print(GA_TargetProfitRegexMatch.groups())
+                flag_GA_TargetProfit = 1
+                GA_TargetProfitRow = (linea.split("   ")[0],) + GA_TargetProfitRegexMatch.groups() + ("GA_TargetProfit",)
+                # print(GA_TargetProfitRow)
+
+            #Global Account TargetProfit (1.00%) has been reached ($51 005.85 -> $51 516.26)!
+            GA_TargetProfitRegex2 = re.compile(r'Global Account TargetProfit \(([0-9]*[.]?[0-9]*)\%\) has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) -> \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TargetProfitRegexMatch2 = GA_TargetProfitRegex2.search(mensaje)
+            if GA_TargetProfitRegexMatch2 is not None:
+                # print(GA_TargetProfitRegexMatch2.groups())
+                flag_GA_TargetProfit2 = 1
+                GA_TargetProfitRow2 = (linea.split("   ")[0],) + GA_TargetProfitRegexMatch2.groups() + ("GA_TargetProfit2",)
+                # print(GA_TargetProfitRow2)
+
+            #GlobalAccount TrailingStop ($10.00) activated, start equity = $50 001.85, current equity = $50 011.85...
+            GA_TrailingStopActivatedRegex = re.compile(r'GlobalAccount TrailingStop \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) activated, start equity = \$([\+\-\ 0-9]*[.]?[0-9]*), current equity = \$([\+\-\ 0-9]*[.]?[0-9]*)...')
+            GA_TrailingStopActivatedRegexMatch = GA_TrailingStopActivatedRegex.search(mensaje)
+            if GA_TrailingStopActivatedRegexMatch is not None:
+                # print(GA_TrailingStopActivatedRegexMatch.groups())
+                flag_GA_TrailingStopActivated = 1
+                GA_TrailingStopActivatedRow = (linea.split("   ")[0],) + GA_TrailingStopActivatedRegexMatch.groups() + ("GA_TrailingStopActivated",)
+                # print(GA_TrailingStopActivatedRow)
+
+            #GlobalAccount TrailingStop (1.00%) activated, start equity = $90 936.95, current equity = $91 889.20...
+            GA_TrailingStopActivatedRegex2 = re.compile(r'GlobalAccount TrailingStop \(([\+\-\ 0-9]*[.]?[0-9]*)\%\) activated, start equity = \$([\+\-\ 0-9]*[.]?[0-9]*), current equity = \$([\+\-\ 0-9]*[.]?[0-9]*)...')
+            GA_TrailingStopActivatedRegexMatch2 = GA_TrailingStopActivatedRegex2.search(mensaje)
+            if GA_TrailingStopActivatedRegexMatch2 is not None:
+                # print(GA_TrailingStopActivatedRegexMatch2.groups())
+                flag_GA_TrailingStopActivated2 = 1
+                GA_TrailingStopActivatedRow2 = (linea.split("   ")[0],) + GA_TrailingStopActivatedRegexMatch2.groups() + ("GA_TrailingStopActivated2",)
+                # print(GA_TrailingStopActivatedRow2)
+
+            #Global Account TrailingStop ($10.00) has been reached (max equity = $50 012.85, current equity = $50 002.85)!
+            GA_TrailingStopRegex = re.compile(r'Global Account TrailingStop \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) has been reached \(max equity = \$([\+\-\ 0-9]*[.]?[0-9]*), current equity = \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TrailingStopRegexMatch = GA_TrailingStopRegex.search(mensaje)
+            if GA_TrailingStopRegexMatch is not None:
+                # print(GA_TrailingStopRegexMatch.groups())
+                flag_GA_TrailingStop = 1
+                GA_TrailingStopRow = (linea.split("   ")[0],) + GA_TrailingStopRegexMatch.groups() + ("GA_TrailingStop",)
+                # print(GA_TrailingStopRow)
+
+            #Global Account TrailingStop (1.00%) has been reached (max equity = $51 486.68, current equity = $50 951.63)!
+            GA_TrailingStopRegex2 = re.compile(r'Global Account TrailingStop \(([\+\-\ 0-9]*[.]?[0-9]*)\%\) has been reached \(max equity = \$([\+\-\ 0-9]*[.]?[0-9]*), current equity = \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
+            GA_TrailingStopRegexMatch2 = GA_TrailingStopRegex2.search(mensaje)
+            if GA_TrailingStopRegexMatch2 is not None:
+                # print(GA_TrailingStopRegexMatch2.groups())
+                flag_GA_TrailingStop2 = 1
+                GA_TrailingStopRow2 = (linea.split("   ")[0],) + GA_TrailingStopRegexMatch2.groups() + ("GA_TrailingStop2",)
+                # print(GA_TrailingStopRow2)
+
+            # --------------------------------------------------------------------------------------------
+            # Global Account END
+            # --------------------------------------------------------------------------------------------
+
+
             #Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
-            Partial_closeRegex = re.compile(r'Partial close hedge: closing ([0-9]+) profit order \(\$([\+\-0-9]*[.]?[0-9]*)\) \+ ([0-9]+) opposite loss order \(\$([\+\-0-9]*[.]?[0-9]*)\) with total profit \$([\+\-0-9]*[.]?[0-9]*)!')
+            Partial_closeRegex = re.compile(r'Partial close hedge: closing ([0-9]+) profit order \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) \+ ([0-9]+) opposite loss order \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) with total profit \$([\+\-\ 0-9]*[.]?[0-9]*)!')
             Partial_closeRegexMatch = Partial_closeRegex.search(mensaje)
             if Partial_closeRegexMatch is not None:
                 # print(Partial_closeRegexMatch.groups())
@@ -566,7 +656,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             #Partial close any: closing 2 profit orders ($+266.05) + 1 loss order ($-166.00) with total profit $+100.05!
-            Partial_closeRegex2 = re.compile(r'Partial close any: closing ([0-9]+) profit orders \(\$([\+\-0-9]*[.]?[0-9]*)\) \+ ([0-9]+) loss order \(\$([\+\-0-9]*[.]?[0-9]*)\) with total profit \$([\+\-0-9]*[.]?[0-9]*)!')
+            Partial_closeRegex2 = re.compile(r'Partial close any: closing ([0-9]+) profit orders \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) \+ ([0-9]+) loss order \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) with total profit \$([\+\-\ 0-9]*[.]?[0-9]*)!')
             Partial_closeRegexMatch2 = Partial_closeRegex2.search(mensaje)
             if Partial_closeRegexMatch2 is not None:
                 # print(Partial_closeRegexMatch2.groups())
@@ -577,7 +667,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 flag_Signal = flag_Signal2 = flag_Signal3 = flag_Signal4 = flag_Signal5 = flag_Signal6 = flag_Signal7 = flag_Signal8 = flag_Sum_TakeProfit = 0
 
             #Partial close for SELL-series: closing 3 profit orders ($+110.17) + 1 loss order ($-104.10) with total profit $+6.07!
-            Partial_closeRegex3 = re.compile(r'Partial close for (BUY|SELL)-series: closing ([0-9]+) profit orders \(\$([\+\-0-9]*[.]?[0-9]*)\) \+ ([0-9]+) loss order \(\$([\+\-0-9]*[.]?[0-9]*)\) with total profit \$([\+\-0-9]*[.]?[0-9]*)!')
+            Partial_closeRegex3 = re.compile(r'Partial close for (BUY|SELL)-series: closing ([0-9]+) profit orders \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) \+ ([0-9]+) loss order \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) with total profit \$([\+\-\ 0-9]*[.]?[0-9]*)!')
             Partial_closeRegexMatch3 = Partial_closeRegex3.search(mensaje)
             if Partial_closeRegexMatch3 is not None:
                 # print(Partial_closeRegexMatch3.groups())
@@ -599,7 +689,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 # print(SlippagesRow)
 
             #Sum TakeProfit ($1.00) has been reached ($1.52 >= $1.00)!
-            Sum_TakeProfitRegex = re.compile(r'Sum TakeProfit \(\$([\+\-0-9]*[.]?[0-9]*)\) has been reached \(\$([\+\-0-9]*[.]?[0-9]*) >= \$([\+\-0-9]*[.]?[0-9]*)\)!')
+            Sum_TakeProfitRegex = re.compile(r'Sum TakeProfit \(\$([\+\-\ 0-9]*[.]?[0-9]*)\) has been reached \(\$([\+\-\ 0-9]*[.]?[0-9]*) >= \$([\+\-\ 0-9]*[.]?[0-9]*)\)!')
             Sum_TakeProfitRegexMatch = Sum_TakeProfitRegex.search(mensaje)
             if Sum_TakeProfitRegexMatch is not None:
                 # print(Sum_TakeProfitRegexMatch.groups())
@@ -618,6 +708,15 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                 TesterWithdrawalRow = (linea.split("   ")[0],) + TesterWithdrawalRegexMatch.groups() + ("TesterWithdrawalRow",)
                 # print(TesterWithdrawalRow)
 
+            #Buy-series with 3 orders reached BreakEven (1.07368 >= 1.07368)!
+            #Sell-series with 4 orders reached BreakEven (1.08801 <= 1.08805)!
+            orders_reached_BreakEvenRegex = re.compile(r'(Buy|Sell)-series with ([0-9]*) orders reached BreakEven \(([\+\-0-9]*[.]?[0-9]*) >= ([\+\-0-9]*[.]?[0-9]*)\)!')
+            orders_reached_BreakEvenRegexMatch = orders_reached_BreakEvenRegex.search(mensaje)
+            if orders_reached_BreakEvenRegexMatch is not None:
+                # print(orders_reached_BreakEvenRegexMatch.groups())
+                flag_orders_reached_BreakEven = 1
+                orders_reached_BreakEvenRow = (linea.split("   ")[0],) + orders_reached_BreakEvenRegexMatch.groups() + ("orders_reached_BreakEvenRow",)
+                # print(orders_reached_BreakEvenRow)
 
             # ---------------------------------------------------------------------------------------------------------------------------------------
             # Join the signal together with the order and market and position and etc.
@@ -935,12 +1034,12 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     #                   #order performed sell 0.65 at 1.11845 [#17 sell 0.65 EURUSD at 1.11845]
                     #OrderSendRow       #|  OrderSend( EURUSD, sell, 0.65, 1.11845, 50, 0.00000, 0.00000, "CP28.01.2022.09:58 #H1", 2421 ) - OK! Ticket #17.
 
-                    #SignalRow7         #2021.06.01 10:30:16   Signal to open AutoHedge for sell-order #1!
-                    #marketRow          #2021.06.01 10:30:16   market buy 1 USDCAD (1.20365 / 1.20384)
-                    #                   #2021.06.01 10:30:16   deal #3 buy 1 USDCAD at 1.20384 done (based on order #3)
-                    #                   #2021.06.01 10:30:16   deal performed [#3 buy 1 USDCAD at 1.20384]
-                    #                   #2021.06.01 10:30:16   order performed buy 1 at 1.20384 [#3 buy 1 USDCAD at 1.20384]
-                    #OrderSendRow       #2021.06.01 10:30:16   |  OrderSend( USDCAD, buy, 1.0, 1.20384, 50, 0.00000, 0.00000, "ZIGZAG #H1", 2431 ) - OK! Ticket #3.
+                    #SignalRow7         #Signal to open AutoHedge for sell-order #1!
+                    #marketRow          #market buy 1 USDCAD (1.20365 / 1.20384)
+                    #                   #deal #3 buy 1 USDCAD at 1.20384 done (based on order #3)
+                    #                   #deal performed [#3 buy 1 USDCAD at 1.20384]
+                    #                   #order performed buy 1 at 1.20384 [#3 buy 1 USDCAD at 1.20384]
+                    #OrderSendRow       #|  OrderSend( USDCAD, buy, 1.0, 1.20384, 50, 0.00000, 0.00000, "ZIGZAG #H1", 2431 ) - OK! Ticket #3.
                     if (SignalRow7[3] == OrderSendRow[8].split("#H")[1]) and (marketRow[3] == OrderSendRow[1]):
                         csv_row.append({'Time': SignalRow7[0],
                             'Action': f'Signal8 to {SignalRow7[1]}',
@@ -993,69 +1092,533 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         print("Error in Script. Check Log!! Critical error-9")
                         exit()
 
-            #Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
-            if ((len(Global_TakeProfitRow) and len(marketRow2) and len(OrderCloseRow)) and (Global_TakeProfitRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
-                if ((flag_Global_TakeProfit == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
-                    #Global_TakeProfitRow       # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
-                    #marketRow2                 # market buy 0.13 EURUSD, close #5 (1.22325 / 1.22340)
-                    #                           # deal #8 buy 0.13 EURUSD at 1.22340 done (based on order #8)
-                    #                           # deal performed [#8 buy 0.13 EURUSD at 1.22340]
-                    #                           # order performed buy 0.13 at 1.22340 [#8 buy 0.13 EURUSD at 1.22340]
-                    #OrderCloseRow              # |  OrderClose( 5, 0.13, 1.22340, 50 ) - OK!
+            #Global Account TakeProfit has been reached ($10.93 >= $10.00)!
+            if ((len(GA_TakeProfitRow) and len(marketRow2) and len(OrderCloseRow)) and (GA_TakeProfitRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TakeProfit == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TakeProfitRow      #Global Account TakeProfit has been reached ($10.93 >= $10.00)!
+                    #marketRow2             #market buy 1.34 EURUSD, close #19 (1.11413 / 1.11416)
+                    #                       #deal #20 buy 1.34 EURUSD at 1.11416 done (based on order #20)
+                    #                       #deal performed [#20 buy 1.34 EURUSD at 1.11416]
+                    #                       #order performed buy 1.34 at 1.11416 [#20 buy 1.34 EURUSD at 1.11416]
+                    #OrderCloseRow          #|  OrderClose( 19, 1.34, 1.11416, 50 ) - OK!
+                    #marketRow2             #market sell 0.24 EURUSD, close #18 (1.11413 / 1.11416)
+                    #                       #deal #21 sell 0.24 EURUSD at 1.11413 done (based on order #21)
+                    #                       #deal performed [#21 sell 0.24 EURUSD at 1.11413]
+                    #                       #order performed sell 0.24 at 1.11413 [#21 sell 0.24 EURUSD at 1.11413]
+                    #OrderCloseRow          #|  OrderClose( 18, 0.24, 1.11413, 50 ) - OK!
+                    #marketRow2             #market sell 0.15 EURUSD, close #17 (1.11413 / 1.11416)
+                    #                       #deal #22 sell 0.15 EURUSD at 1.11413 done (based on order #22)
+                    #                       #deal performed [#22 sell 0.15 EURUSD at 1.11413]
+                    #                       #order performed sell 0.15 at 1.11413 [#22 sell 0.15 EURUSD at 1.11413]
+                    #OrderCloseRow          #|  OrderClose( 17, 0.15, 1.11413, 50 ) - OK!
+                    #marketRow2             #market buy 0.07 EURUSD, close #16 (1.11413 / 1.11416)
+                    #                       #deal #23 buy 0.07 EURUSD at 1.11416 done (based on order #23)
+                    #                       #deal performed [#23 buy 0.07 EURUSD at 1.11416]
+                    #                       #order performed buy 0.07 at 1.11416 [#23 buy 0.07 EURUSD at 1.11416]
+                    #OrderCloseRow          #|  OrderClose( 16, 0.07, 1.11416, 50 ) - OK!
+                    #marketRow2             #market sell 0.1 EURUSD, close #15 (1.11413 / 1.11416)
+                    #                       #deal #24 sell 0.1 EURUSD at 1.11413 done (based on order #24)
+                    #                       #deal performed [#24 sell 0.1 EURUSD at 1.11413]
+                    #                       #order performed sell 0.1 at 1.11413 [#24 sell 0.1 EURUSD at 1.11413]
+                    #OrderCloseRow          #|  OrderClose( 15, 0.10, 1.11413, 50 ) - OK!
+                    #marketRow2             #market sell 0.07 EURUSD, close #14 (1.11413 / 1.11416)
+                    #                       #deal #25 sell 0.07 EURUSD at 1.11413 done (based on order #25)
+                    #                       #deal performed [#25 sell 0.07 EURUSD at 1.11413]
+                    #                       #order performed sell 0.07 at 1.11413 [#25 sell 0.07 EURUSD at 1.11413]
+                    #OrderCloseRow          #|  OrderClose( 14, 0.07, 1.11413, 50 ) - OK!
                     # <----->buy<----->
                     if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
-                        csv_row.append({'Time': Global_TakeProfitRow[0],
-                            'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> ${Global_TakeProfitRow[3]}',
+                        StartEquity=GA_TakeProfitRow[1]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TakeProfitRow[2]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TakeProfitRow[0],
+                            'Action': 'Global Account TakeProfit',
                             'Type': marketRow2[1],
-                            'Signal': 'Global TakeProfit',
+                            'Signal': 'Global Account TakeProfit',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'Profit': Global_TakeProfitRow[2],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
                             'TakeProfit': OrderCloseRow[3],
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
-                        Global_TakeProfitRow = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
-                        flag_Global_TakeProfit = 0
                         flag_market2 = 0
                         flag_OrderClose = 0
                         continue
-                    #Global_TakeProfitRow       # Global TakeProfit (1.0%) has been reached ($111.64 >= $100.00)!
-                    #marketRow2                 # market sell 0.17 EURUSD, close #6 (1.22325 / 1.22340)
-                    #                           # deal #7 sell 0.17 EURUSD at 1.22325 done (based on order #7)
-                    #                           # deal performed [#7 sell 0.17 EURUSD at 1.22325]
-                    #                           # order performed sell 0.17 at 1.22325 [#7 sell 0.17 EURUSD at 1.22325]
-                    #OrderCloseRow              # |  OrderClose( 6, 0.17, 1.22325, 50 ) - OK!
                     # <----->sell<----->
                     elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
-                        csv_row.append({'Time': Global_TakeProfitRow[0],
-                            'Action': f'Global TakeProfit {Global_TakeProfitRow[1]}% -> $ {Global_TakeProfitRow[3]}',
+                        StartEquity=GA_TakeProfitRow[1]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TakeProfitRow[2]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TakeProfitRow[0],
+                            'Action': 'Global Account TakeProfit',
                             'Type': marketRow2[1],
-                            'Signal': 'Global TakeProfit',
+                            'Signal': 'Global Account TakeProfit',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
-                            'Profit': Global_TakeProfitRow[2],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
                             'Slippage': OrderCloseRow[4],
                             'Value1': marketRow2[6],
                             'Value2': marketRow2[7],
                             'TakeProfit': OrderCloseRow[3],
                             'Status': OrderCloseRow[5],
                             'Ticket #': OrderCloseRow[1]})
-                        Global_TakeProfitRow = tuple()
                         marketRow2 = tuple()
                         OrderCloseRow = tuple()
-                        flag_Global_TakeProfit = 0
                         flag_market2 = 0
                         flag_OrderClose = 0
                         continue
                     else:
                         print("Error in Script. Check Log!! Critical error-10")
+                        exit()
+
+            #Global Account TakeProfit (1.00%) has been reached ($518.16 >= $503.97)!
+            if ((len(GA_TakeProfitRow2) and len(marketRow2) and len(OrderCloseRow)) and (GA_TakeProfitRow2[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TakeProfit2 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TakeProfitRow2     #Global Account TakeProfit (1.00%) has been reached ($518.16 >= $503.97)!
+                    #marketRow2             #market sell 8.2 EURUSD, close #36 (1.13011 / 1.13027)
+                    #                       #deal #28 sell 8.2 EURUSD at 1.13011 done (based on order #37)
+                    #                       #deal performed [#28 sell 8.2 EURUSD at 1.13011]
+                    #                       #order performed sell 8.2 at 1.13011 [#37 sell 8.2 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 36, 8.2, 1.13011, 50 ) - OK!
+                    #marketRow2             #market sell 4.68 EURUSD, close #35 (1.13011 / 1.13027)
+                    #                       #deal #29 sell 4.68 EURUSD at 1.13011 done (based on order #38)
+                    #                       #deal performed [#29 sell 4.68 EURUSD at 1.13011]
+                    #                       #order performed sell 4.68 at 1.13011 [#38 sell 4.68 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 35, 4.68, 1.13011, 50 ) - OK!
+                    #marketRow2             #market sell 2.67 EURUSD, close #34 (1.13011 / 1.13027)
+                    #                       #deal #30 sell 2.67 EURUSD at 1.13011 done (based on order #39)
+                    #                       #deal performed [#30 sell 2.67 EURUSD at 1.13011]
+                    #                       #order performed sell 2.67 at 1.13011 [#39 sell 2.67 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 34, 2.67, 1.13011, 50 ) - OK!
+                    #marketRow2             #market sell 1.53 EURUSD, close #33 (1.13011 / 1.13027)
+                    #                       #deal #31 sell 1.53 EURUSD at 1.13011 done (based on order #40)
+                    #                       #deal performed [#31 sell 1.53 EURUSD at 1.13011]
+                    #                       #order performed sell 1.53 at 1.13011 [#40 sell 1.53 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 33, 1.53, 1.13011, 50 ) - OK!
+                    #marketRow2             #market sell 0.87 EURUSD, close #32 (1.13011 / 1.13027)
+                    #                       #deal #32 sell 0.87 EURUSD at 1.13011 done (based on order #41)
+                    #                       #deal performed [#32 sell 0.87 EURUSD at 1.13011]
+                    #                       #order performed sell 0.87 at 1.13011 [#41 sell 0.87 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 32, 0.87, 1.13011, 50 ) - OK!
+                    #marketRow2             #market sell 0.5 EURUSD, close #31 (1.13011 / 1.13027)
+                    #                       #deal #33 sell 0.5 EURUSD at 1.13011 done (based on order #42)
+                    #                       #deal performed [#33 sell 0.5 EURUSD at 1.13011]
+                    #                       #order performed sell 0.5 at 1.13011 [#42 sell 0.5 EURUSD at 1.13011]
+                    #OrderCloseRow          #|  OrderClose( 31, 0.5, 1.13011, 50 ) - OK!
+                    # <----->buy<----->
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
+                        StartEquity=GA_TakeProfitRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TakeProfitRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TakeProfitRow2[0],
+                            'Action': f'Global Account TakeProfit {GA_TakeProfitRow2[1]}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    # <----->sell<----->
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
+                        StartEquity=GA_TakeProfitRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TakeProfitRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TakeProfitRow2[0],
+                            'Action': f'Global Account TakeProfit {GA_TakeProfitRow2[1]}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-11")
+                        exit()
+
+
+            #Global Account TargetProfit ($1.00) has been reached ($50 592.19 -> $50 594.69)!
+            if ((len(GA_TargetProfitRow) and len(marketRow2) and len(OrderCloseRow)) and (GA_TargetProfitRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TargetProfit == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TargetProfitRow     #Global Account TargetProfit ($1.00) has been reached ($50 592.19 -> $50 594.69)!
+                    #marketRow2             #market buy 0.5 EURUSD, close #887 (1.07284 / 1.07300)
+                    #                       #deal #747 buy 0.5 EURUSD at 1.07300 done (based on order #888)
+                    #                       #deal performed [#747 buy 0.5 EURUSD at 1.07300]
+                    #                       #order performed buy 0.5 at 1.07300 [#888 buy 0.5 EURUSD at 1.07300]
+                    #OrderCloseRow          #|  OrderClose( 887, 0.5, 1.07300, 50 ) - OK!
+                    # <----->buy<----->
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
+                        StartEquity=GA_TargetProfitRow[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TargetProfitRow[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TargetProfitRow[0],
+                            'Action': f'Global Account TargetProfit ${GA_TargetProfitRow[1]}',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    # <----->sell<----->
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
+                        StartEquity=GA_TargetProfitRow[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TargetProfitRow[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TargetProfitRow[0],
+                            'Action': f'Global Account TargetProfit ${GA_TargetProfitRow[1]}',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-12")
+                        exit()
+
+            #Global Account TargetProfit (1.00%) has been reached ($92 541.58 -> $93 513.54)!
+            if ((len(GA_TargetProfitRow2) and len(marketRow2) and len(OrderCloseRow)) and (GA_TargetProfitRow2[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TargetProfit2 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TargetProfitRow2    #Global Account TargetProfit ($1.00) has been reached ($50 592.19 -> $50 594.69)!
+                    #marketRow2             #market buy 0.5 EURUSD, close #887 (1.07284 / 1.07300)
+                    #                       #deal #747 buy 0.5 EURUSD at 1.07300 done (based on order #888)
+                    #                       #deal performed [#747 buy 0.5 EURUSD at 1.07300]
+                    #                       #order performed buy 0.5 at 1.07300 [#888 buy 0.5 EURUSD at 1.07300]
+                    #OrderCloseRow          #|  OrderClose( 887, 0.5, 1.07300, 50 ) - OK!
+                    # <----->buy<----->
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
+                        StartEquity=GA_TargetProfitRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TargetProfitRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TargetProfitRow2[0],
+                            'Action': f'Global Account TargetProfit {GA_TargetProfitRow2}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    # <----->sell<----->
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
+                        StartEquity=GA_TargetProfitRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TargetProfitRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TargetProfitRow2[0],
+                            'Action': f'Global Account TargetProfit {GA_TargetProfitRow2}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-13")
+                        exit()
+
+            #GlobalAccount TrailingStop ($10.00) activated, start equity = $50 001.85, current equity = $50 011.85...
+            if (len(GA_TrailingStopActivatedRow)):
+                if (flag_GA_TrailingStopActivated == 1):
+
+                    StartEquity=GA_TrailingStopActivatedRow[2]
+                    StartEquity=StartEquity.replace("+", "")
+                    StartEquity=StartEquity.replace(" ", "")
+
+                    CurrentEquity=GA_TrailingStopActivatedRow[3]
+                    CurrentEquity=CurrentEquity.replace("+", "")
+                    CurrentEquity=CurrentEquity.replace(" ", "")
+
+                    csv_row.append({'Time': GA_TrailingStopActivatedRow[0],
+                        'Action': f'Global Account TrailingStop ${GA_TrailingStopActivatedRow2[1]} activated',
+                        'StartEquity': StartEquity,
+                        'CurrentEquity': CurrentEquity})
+                    GA_TrailingStopActivatedRow = tuple()
+                    flag_GA_TrailingStopActivated = 0
+                    continue
+
+            #GlobalAccount TrailingStop (1.00%) activated, start equity = $90 936.95, current equity = $91 889.20...
+            if (len(GA_TrailingStopActivatedRow2)):
+                if (flag_GA_TrailingStopActivated2 == 1):
+
+                    StartEquity=GA_TrailingStopActivatedRow2[2]
+                    StartEquity=StartEquity.replace("+", "")
+                    StartEquity=StartEquity.replace(" ", "")
+
+                    CurrentEquity=GA_TrailingStopActivatedRow2[3]
+                    CurrentEquity=CurrentEquity.replace("+", "")
+                    CurrentEquity=CurrentEquity.replace(" ", "")
+
+                    csv_row.append({'Time': GA_TrailingStopActivatedRow2[0],
+                        'Action': f'Global Account TrailingStop {GA_TrailingStopActivatedRow2[1]}% activated',
+                        'StartEquity': StartEquity,
+                        'CurrentEquity': CurrentEquity})
+                    GA_TrailingStopActivatedRow2 = tuple()
+                    flag_GA_TrailingStopActivated2 = 0
+                    continue
+
+            #Global Account TrailingStop ($10.00) has been reached (max equity = $50 012.85, current equity = $50 002.85)!
+            if ((len(GA_TrailingStopRow) and len(marketRow2) and len(OrderCloseRow)) and (GA_TrailingStopRow[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TrailingStop == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TrailingStopRow     #Global Account TrailingStop ($1.00) has been reached (max equity = $50 221.18, current equity = $50 218.68)!
+                    #marketRow2             #market buy 0.5 EURUSD, close #885 (1.07215 / 1.07240)
+                    #                       #deal #745 buy 0.5 EURUSD at 1.07240 done (based on order #886)
+                    #                       #deal performed [#745 buy 0.5 EURUSD at 1.07240]
+                    #                       #order performed buy 0.5 at 1.07240 [#886 buy 0.5 EURUSD at 1.07240]
+                    #OrderCloseRow          #|  OrderClose( 885, 0.5, 1.07240, 50 ) - OK!
+                    # <----->buy<----->
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
+                        StartEquity=GA_TrailingStopRow[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TrailingStopRow[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TrailingStopRow[0],
+                            'Action': f'Global Account TrailingStop ${GA_TrailingStopRow[1]}',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TrailingStop',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    # <----->sell<----->
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
+                        StartEquity=GA_TrailingStopRow[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TrailingStopRow[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TrailingStopRow[0],
+                            'Action': f'Global Account TargetProfit ${GA_TrailingStopRow[1]})',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-14")
+                        exit()
+
+            #Global Account TrailingStop (1.00%) has been reached (max equity = $51 486.68, current equity = $50 951.63)!
+            if ((len(GA_TrailingStopRow2) and len(marketRow2) and len(OrderCloseRow)) and (GA_TrailingStopRow2[0] == marketRow2[0]) and (marketRow2[0] == OrderCloseRow[0])):
+                if ((flag_GA_TrailingStop2 == 1) and (flag_market2 == 1) and (flag_OrderClose == 1)):
+                    #GA_TrailingStopRow2    #Global Account TrailingStop (1.00%) has been reached (max equity = $92 074.00, current equity = $91 131.52)!
+                    #marketRow2             #market buy 8.44 EURUSD, close #1071 (1.07091 / 1.07116)
+                    #                       #deal #951 buy 8.44 EURUSD at 1.07116 done (based on order #1072)
+                    #                       #deal performed [#951 buy 8.44 EURUSD at 1.07116]
+                    #                       #order performed buy 8.44 at 1.07116 [#1072 buy 8.44 EURUSD at 1.07116]
+                    #OrderCloseRow          #|  OrderClose( 1071, 8.44, 1.07116, 50 ) - OK!
+                    # <----->buy<----->
+                    if (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[7] == OrderCloseRow[3]):
+                        StartEquity=GA_TrailingStopRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TrailingStopRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TrailingStopRow2[0],
+                            'Action': f'Global Account TrailingStop {GA_TrailingStopRow2[1]}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TrailingStop',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    # <----->sell<----->
+                    elif (str(round(float(marketRow2[2]),2)) == str(round(float(OrderCloseRow[2]),2))) and (marketRow2[5] == OrderCloseRow[1]) and (marketRow2[6] == OrderCloseRow[3]):
+                        StartEquity=GA_TrailingStopRow2[2]
+                        StartEquity=StartEquity.replace("+", "")
+                        StartEquity=StartEquity.replace(" ", "")
+
+                        CurrentEquity=GA_TrailingStopRow2[3]
+                        CurrentEquity=CurrentEquity.replace("+", "")
+                        CurrentEquity=CurrentEquity.replace(" ", "")
+
+                        csv_row.append({'Time': GA_TrailingStopRow2[0],
+                            'Action': f'Global Account TargetProfit {GA_TrailingStopRow2[1]}%',
+                            'Type': marketRow2[1],
+                            'Signal': 'Global Account TargetProfit',
+                            'Symbol': marketRow2[3],
+                            'Volume': marketRow2[2],
+                            'PriceAction': OrderCloseRow[3],
+                            'StartEquity': StartEquity,
+                            'CurrentEquity': CurrentEquity,
+                            'Slippage': OrderCloseRow[4],
+                            'Value1': marketRow2[6],
+                            'Value2': marketRow2[7],
+                            'TakeProfit': OrderCloseRow[3],
+                            'Status': OrderCloseRow[5],
+                            'Ticket #': OrderCloseRow[1]})
+                        marketRow2 = tuple()
+                        OrderCloseRow = tuple()
+                        flag_market2 = 0
+                        flag_OrderClose = 0
+                        continue
+                    else:
+                        print("Error in Script. Check Log!! Critical error-15")
                         exit()
 
 
@@ -1091,7 +1654,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderModify = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-11")
+                        print("Error in Script. Check Log!! Critical error-16")
                         continue
                         # exit()
 
@@ -1123,7 +1686,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderModify = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-12")
+                        print("Error in Script. Check Log!! Critical error-17")
                         exit()
 
             # Partial close hedge: closing 1 profit order ($+76.85) + 1 opposite loss order ($-75.77) with total profit $+1.08!
@@ -1160,6 +1723,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             csv_row.append({'Time': Partial_closeRow[0],
                                 'Action': f'Partial close hedge profit {Partial_closeRow[1]} + loss {Partial_closeRow[3]}',
                                 'Type': marketRow2[1],
+                                'Signal': 'Partial close hedge',
                                 'Symbol': marketRow2[3],
                                 'Volume': marketRow2[2],
                                 'PriceAction': OrderCloseRow[3],
@@ -1175,7 +1739,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             OrderCloseRow = tuple()
                             continue
                         else:
-                            print("Error in Script. Check Log!! Critical error-13")
+                            print("Error in Script. Check Log!! Critical error-18")
                             continue
                             # exit()
                     if close_order >= total_close_order:
@@ -1214,6 +1778,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         csv_row.append({'Time': Partial_closeRow2[0],
                             'Action': f'Partial close any profit {Partial_closeRow2[1]} + loss {Partial_closeRow2[3]}',
                             'Type': marketRow2[1],
+                            'Signal': 'Partial close',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
@@ -1235,7 +1800,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             Partial_closeRow2 = tuple()
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-14")
+                        print("Error in Script. Check Log!! Critical error-19")
                         exit()
 
 
@@ -1268,6 +1833,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         csv_row.append({'Time': Partial_closeRow3[0],
                             'Action': f'Partial close for {Partial_closeRow3[1]}-series {Partial_closeRow3[2]} + loss {Partial_closeRow3[4]}',
                             'Type': marketRow2[1],
+                            'Signal': 'Partial close',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
@@ -1289,7 +1855,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                             Partial_closeRow3 = tuple()
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-15")
+                        print("Error in Script. Check Log!! Critical error-20")
                         exit()
 
 
@@ -1316,6 +1882,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         csv_row.append({'Time': Sum_TakeProfitRow[0],
                             'Action': f'Sum TakeProfit {Sum_TakeProfitRow[1]} has been reached {Sum_TakeProfitRow[2]} >= {Sum_TakeProfitRow[3]}',
                             'Type': marketRow2[1],
+                            'Signal': 'Sum TakeProfit',
                             'Symbol': marketRow2[3],
                             'Volume': marketRow2[2],
                             'PriceAction': OrderCloseRow[3],
@@ -1331,51 +1898,17 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         flag_OrderClose = 0
                         continue
                     else:
-                        print("Error in Script. Check Log!! Critical error-16")
+                        print("Error in Script. Check Log!! Critical error-21")
                         exit()
-
-                #FALTA TERMINAR
-                #Global Account TakeProfit has been reached ($10.93 >= $10.00)!
-                #market buy 1.34 EURUSD, close #19 (1.11413 / 1.11416)
-                #deal #20 buy 1.34 EURUSD at 1.11416 done (based on order #20)
-                #deal performed [#20 buy 1.34 EURUSD at 1.11416]
-                #order performed buy 1.34 at 1.11416 [#20 buy 1.34 EURUSD at 1.11416]
-                #|  OrderClose( 19, 1.34, 1.11416, 50 ) - OK!
-                #market sell 0.24 EURUSD, close #18 (1.11413 / 1.11416)
-                #deal #21 sell 0.24 EURUSD at 1.11413 done (based on order #21)
-                #deal performed [#21 sell 0.24 EURUSD at 1.11413]
-                #order performed sell 0.24 at 1.11413 [#21 sell 0.24 EURUSD at 1.11413]
-                #|  OrderClose( 18, 0.24, 1.11413, 50 ) - OK!
-                #market sell 0.15 EURUSD, close #17 (1.11413 / 1.11416)
-                #deal #22 sell 0.15 EURUSD at 1.11413 done (based on order #22)
-                #deal performed [#22 sell 0.15 EURUSD at 1.11413]
-                #order performed sell 0.15 at 1.11413 [#22 sell 0.15 EURUSD at 1.11413]
-                #|  OrderClose( 17, 0.15, 1.11413, 50 ) - OK!
-                #market buy 0.07 EURUSD, close #16 (1.11413 / 1.11416)
-                #deal #23 buy 0.07 EURUSD at 1.11416 done (based on order #23)
-                #deal performed [#23 buy 0.07 EURUSD at 1.11416]
-                #order performed buy 0.07 at 1.11416 [#23 buy 0.07 EURUSD at 1.11416]
-                #|  OrderClose( 16, 0.07, 1.11416, 50 ) - OK!
-                #market sell 0.1 EURUSD, close #15 (1.11413 / 1.11416)
-                #deal #24 sell 0.1 EURUSD at 1.11413 done (based on order #24)
-                #deal performed [#24 sell 0.1 EURUSD at 1.11413]
-                #order performed sell 0.1 at 1.11413 [#24 sell 0.1 EURUSD at 1.11413]
-                #|  OrderClose( 15, 0.10, 1.11413, 50 ) - OK!
-                #market sell 0.07 EURUSD, close #14 (1.11413 / 1.11416)
-                #deal #25 sell 0.07 EURUSD at 1.11413 done (based on order #25)
-                #deal performed [#25 sell 0.07 EURUSD at 1.11413]
-                #order performed sell 0.07 at 1.11413 [#25 sell 0.07 EURUSD at 1.11413]
-                #|  OrderClose( 14, 0.07, 1.11413, 50 ) - OK!
-                #
-                #
 
             if (len(TrailingStopRow)):
                 if (flag_TrailingStop == 1):
-                    # TrailingStop for BUY: 1.13446 -> 1.13553
-                    # TrailingStop for SELL: 0 -> 1.13679
+                    #GA_TakeProfitRow   # TrailingStop for BUY: 1.13446 -> 1.13553
+
+                    #GA_TakeProfitRow   # TrailingStop for SELL: 0 -> 1.13679
                     # https://www.metatrader4.com/es/trading-platform/help/positions/trailing
                     csv_row.append({'Time': TrailingStopRow[0],
-                        'Action': 'TrailingStop for ' + TrailingStopRow[1].lower(),
+                        'Action': f'TrailingStop for {TrailingStopRow[1].lower()}',
                         'Type': TrailingStopRow[1].lower(),
                         'PriceAction': TrailingStopRow[2],
                         'StopLoss': TrailingStopRow[3]})
@@ -1409,6 +1942,23 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_TesterWithdrawal = 0
                     continue
 
+            #Buy-series with 3 orders reached BreakEven (1.07368 >= 1.07368)!
+            #Sell-series with 4 orders reached BreakEven (1.08801 <= 1.08805)!
+            if (len(orders_reached_BreakEvenRow)):
+                if (flag_orders_reached_BreakEven == 1):
+                    #orders_reached_BreakEvenRow    #Sell-series with 4 orders reached BreakEven (1.10217 <= 1.10221)!
+
+                    #orders_reached_BreakEvenRow    #Buy-series with 3 orders reached BreakEven (1.07368 >= 1.07368)!
+                    csv_row.append({'Time': orders_reached_BreakEvenRow[0],
+                        'Action': f'{orders_reached_BreakEvenRow[2]} orders reached BreakEven',
+                        'Type': orders_reached_BreakEvenRow[1].lower(),
+                        'Value1': orders_reached_BreakEvenRow[3],
+                        'Value2': orders_reached_BreakEvenRow[4]})
+                    orders_reached_BreakEvenRow = tuple()
+                    flag_orders_reached_BreakEven = 0
+                    continue
+
+
             # https://www.metatrader4.com/en/trading-platform/help/positions/orders
             # CHECK THIS IF WORKING
             if (len(stop_loss_triggeredRow)):
@@ -1430,7 +1980,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_stop_loss_triggered = 0
                     continue
                 else:
-                    print("Error in Script. Check Log!! Critical error-17")
+                    print("Error in Script. Check Log!! Critical error-18")
                     exit()
 
 
@@ -1454,7 +2004,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_stop_loss_triggered2 = 0
                     continue
                 else:
-                    print("Error in Script. Check Log!! Critical error-18")
+                    print("Error in Script. Check Log!! Critical error-19")
                     exit()
 
 
@@ -1470,7 +2020,7 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                         'Ticket #': SlippagesRow[1]})
                     SlippagesRow = tuple()
                     flag_Slippages = 0
-                    # Flags Initialization
+
                     flag_Signal = 0
                     flag_Signal2 = 0
                     flag_Signal3 = 0
@@ -1478,25 +2028,31 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     flag_Signal5 = 0
                     flag_Signal6 = 0
                     flag_Signal7 = 0
+                    flag_Signal8 = 0
                     flag_OrderSend = 0
                     flag_OrderClose = 0
                     flag_OrderModify = 0
                     flag_OrderModify2 = 0
                     flag_OrderDelete = 0
                     flag_TrailingStop = 0
+                    flag_Sum_TakeProfit = 0
                     flag_Modifying = 0
                     flag_Moving = 0
                     flag_position_modified = 0
                     flag_position_modified2 = 0
                     flag_order_modified = 0
+                    flag_order_canceled = 0
                     flag_stop_loss_triggered = 0
+                    flag_stop_loss_triggered2 = 0
                     flag_market = 0
                     flag_market2 = 0
                     flag_buy_sell_stop = 0
-                    flag_Global_TakeProfit = 0
+                    flag_GA_TakeProfit = 0
                     flag_Partial_close = 0
                     flag_Partial_close2 = 0
+                    flag_Partial_close3 = 0
                     flag_Slippages = 0
+                    flag_TesterWithdrawal = 0
                     # Variables Clean
                     SignalRow = ()
                     SignalRow2 = ()
@@ -1510,7 +2066,10 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     OrderCloseRow = ()
                     OrderModifyRow = ()
                     OrderModifyRow2 = ()
+                    OrderDeleteRow = ()
                     TrailingStopRow = ()
+                    Sum_TakeProfitRow = ()
+                    TesterWithdrawalRow = ()
                     ModifyingRow = ()
                     MovingRow = ()
                     position_modifiedRow = ()
@@ -1522,13 +2081,17 @@ for line in csv.reader(codecs.open(LogFile, 'rU',  'utf-16'), delimiter="\t"):
                     marketRow = ()
                     marketRow2 = ()
                     buy_sell_stopRow = ()
-                    Global_TakeProfitRow = ()
+                    GA_TakeProfitRow = ()
                     calculate_profitRow = ()
                     Partial_closeRow = ()
                     Partial_closeRow2 = ()
+                    Partial_closeRow3 = ()
                     SlippagesRow = ()
+                    close_order = 0
+                    close_order2 = 0
+                    close_order3 = 0
                 else:
-                    print("Error in Script. Check Log!! Critical error-19")
+                    print("Error in Script. Check Log!! Critical error-20")
                     exit()
     else:
         if flag_Magic:
@@ -1565,7 +2128,9 @@ worksheet = workbook.add_worksheet()
 worksheet = workbook.get_worksheet_by_name('Sheet2')
 
 worksheet1 = workbook.get_worksheet_by_name('Sheet1')
-worksheet1.autofilter('A1:T1')
+worksheet1.autofilter('A1:V1')
+worksheet1.freeze_panes(1, 0)
+
 rowCount = worksheet1.dim_rowmax
 
 bold = workbook.add_format({'bold': True})
@@ -1574,6 +2139,18 @@ worksheet.write('B1', 'Sum', bold)
 worksheet.write('C1', 'Min', bold)
 worksheet.write('D1', 'Max', bold)
 worksheet.write('E1', 'Count', bold)
+worksheet.write('F1', 'Average', bold)
+worksheet.write('G1', 'Count #1', bold)
+worksheet.write('H1', 'Count #2', bold)
+worksheet.write('I1', 'Count #3', bold)
+worksheet.write('J1', 'Count #4', bold)
+worksheet.write('K1', 'Count #5', bold)
+worksheet.write('L1', 'Count #6', bold)
+worksheet.write('M1', 'Count #7', bold)
+worksheet.write('N1', 'Count #8', bold)
+worksheet.write('O1', 'Count #9', bold)
+worksheet.write('P1', 'Count #10', bold)
+
 
 worksheet.write('A2', 'Martingale', bold)
 worksheet.write('A3', 'Volume', bold)
@@ -1583,12 +2160,26 @@ worksheet.write_formula('B2', '=SUM(Sheet1!D3:D' + str(rowCount) + ')')
 worksheet.write_formula('C2', '=MIN(Sheet1!D3:D' + str(rowCount) + ')')
 worksheet.write_formula('D2', '=MAX(Sheet1!D3:D' + str(rowCount) + ')')
 worksheet.write_formula('E2', '=COUNT(Sheet1!D3:D' + str(rowCount) + ')')
+worksheet.write_formula('F2', '=AVERAGE(Sheet1!D3:D' + str(rowCount) + ')')
+worksheet.write_formula('G2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',1)')
+worksheet.write_formula('H2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',2)')
+worksheet.write_formula('I2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',3)')
+worksheet.write_formula('J2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',4)')
+worksheet.write_formula('K2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',5)')
+worksheet.write_formula('L2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',6)')
+worksheet.write_formula('M2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',7)')
+worksheet.write_formula('N2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',8)')
+worksheet.write_formula('O2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',9)')
+worksheet.write_formula('P2', '=COUNTIF(Sheet1!D3:D' + str(rowCount) + ',10)')
+
+
 
 #Volume
 worksheet.write_formula('B3', '=SUM(Sheet1!G3:G' + str(rowCount) + ')')
 worksheet.write_formula('C3', '=MIN(Sheet1!G3:G' + str(rowCount) + ')')
 worksheet.write_formula('D3', '=MAX(Sheet1!G3:G' + str(rowCount) + ')')
 worksheet.write_formula('E3', '=COUNT(Sheet1!G3:G' + str(rowCount) + ')')
+worksheet.write_formula('F3', '=AVERAGE(Sheet1!G3:G' + str(rowCount) + ')')
 
 workbook.close()
 
